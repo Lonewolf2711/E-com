@@ -6,16 +6,9 @@ RUN docker-php-ext-install pdo pdo_mysql mysqli
 # Enable Apache mod_rewrite for .htaccess routing
 RUN a2enmod rewrite
 
-# Configure Apache DocumentRoot if necessary, but app is in root here
-ENV APACHE_DOCUMENT_ROOT /var/www/html
-
-# Adjust Apache configuration to listen on $PORT and use the correct DocumentRoot
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-
-# Change Listen port to $PORT instead of 80 (Railway dynamically sets $PORT)
-RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf
-RUN sed -i 's/<VirtualHost \*:80>/<VirtualHost \*:${PORT}>/g' /etc/apache2/sites-available/000-default.conf
+# Ensure only mpm_prefork is enabled (fixes "More than one MPM loaded" error)
+RUN a2dismod mpm_event mpm_worker || true
+RUN a2enmod mpm_prefork
 
 # Copy application files to the container
 COPY . /var/www/html/
@@ -24,5 +17,10 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Expose $PORT (informative)
-EXPOSE ${PORT}
+# Copy the custom entrypoint
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Use the custom entrypoint
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["apache2-foreground"]

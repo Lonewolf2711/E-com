@@ -5,7 +5,7 @@
 
 # Enable Rewrite Engine
 RewriteEngine On
-RewriteBase /E-com/
+RewriteBase /
 
 # ─── Security: Block access to sensitive directories ───
 RewriteRule ^config/ - [F,L]
