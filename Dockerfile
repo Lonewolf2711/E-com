@@ -14,7 +14,11 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Update apache configuration to listen on the Railway provided PORT at runtime
-# and then start the apache server. This avoids any config or MPM errors!
-CMD sed -i "s/80/$PORT/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf && docker-php-entrypoint apache2-foreground
+# At runtime, point Apache at Railway's $PORT (default 80 locally), then start.
+# Targeted replacements only — avoids matching unrelated "80" substrings.
+CMD ["sh", "-c", "PORT=\"${PORT:-80}\" && \
+    echo \"Listen ${PORT}\" > /etc/apache2/ports.conf && \
+    sed -i \"s|<VirtualHost \\*:[0-9]\\+>|<VirtualHost *:${PORT}>|g\" /etc/apache2/sites-available/000-default.conf && \
+    echo \"Apache starting on port ${PORT}\" && \
+    exec docker-php-entrypoint apache2-foreground"]
 
