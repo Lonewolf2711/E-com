@@ -30,6 +30,10 @@ RUN chown -R www-data:www-data /var/www/html \
 CMD ["sh", "-c", "PORT=\"${PORT:-80}\" && \
     echo \"Listen ${PORT}\" > /etc/apache2/ports.conf && \
     sed -i \"s|<VirtualHost \\*:[0-9]\\+>|<VirtualHost *:${PORT}>|g\" /etc/apache2/sites-available/000-default.conf && \
-    echo \"Apache starting on port ${PORT}\" && \
+    echo '=== RUNTIME mods-enabled (mpm) ===' && \
+    ls -la /etc/apache2/mods-enabled/ | grep -i mpm || echo '(no mpm in mods-enabled)' && \
+    echo '=== RUNTIME LoadModule mpm refs ===' && \
+    grep -rin 'LoadModule.*mpm' /etc/apache2/ || echo '(no LoadModule mpm refs)' && \
+    echo \"=== Apache starting on port ${PORT} ===\" && \
     exec docker-php-entrypoint apache2-foreground"]
 
