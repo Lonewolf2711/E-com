@@ -13,8 +13,7 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Configure Apache to use the dynamically assigned PORT from Railway
-RUN echo "export PORT=\${PORT:=80}" >> /etc/apache2/envvars \
-    && sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf \
-    && sed -i 's/<VirtualHost \*:80>/<VirtualHost \*:${PORT}>/g' /etc/apache2/sites-available/000-default.conf
+# Update apache configuration to listen on the Railway provided PORT at runtime
+# and then start the apache server. This avoids any config or MPM errors!
+CMD sed -i "s/80/$PORT/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf && docker-php-entrypoint apache2-foreground
 
