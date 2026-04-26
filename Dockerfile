@@ -3,9 +3,12 @@ FROM php:8.2-apache
 # Install required extensions
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# Enable Apache mod_rewrite and ensure only one MPM is loaded (mpm_prefork)
-RUN a2dismod mpm_event mpm_worker 2>/dev/null || true \
-    && a2enmod mpm_prefork rewrite
+# Force a single MPM (prefork) by removing ALL MPM symlinks then enabling prefork.
+# Also enable mod_rewrite. The ls at the end is a build-log sanity check.
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf \
+    && a2enmod mpm_prefork rewrite \
+    && echo "--- mods-enabled after fix ---" \
+    && ls /etc/apache2/mods-enabled/ | grep mpm_
 
 # Copy application files to the container
 COPY . /var/www/html/
