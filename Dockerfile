@@ -3,8 +3,9 @@ FROM php:8.2-apache
 # Install required extensions
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Enable Apache mod_rewrite and ensure only one MPM is loaded (mpm_prefork)
+RUN a2dismod mpm_event mpm_worker 2>/dev/null || true \
+    && a2enmod mpm_prefork rewrite
 
 # Copy application files to the container
 COPY . /var/www/html/
