@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spare Parts Portal — Complete User Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --brand:#E85D04;--brand-dark:#C44E02;--navy:#0D1B2A;--navy2:#1B2E45;
+      --text:#1a1a2e;--muted:#64748b;--border:#e2e8f0;
+      --success:#16a34a;--info:#0284c7;--warn:#d97706;
+    }
+    body{font-family:'Inter',sans-serif;background:#f8fafc;color:var(--text);line-height:1.6}
+    /* NAV */
+    nav{background:var(--navy);padding:0 2rem;display:flex;align-items:center;gap:2rem;height:60px;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--brand)}
+    nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;font-weight:500;padding:.25rem 0;border-bottom:2px solid transparent;transition:.2s}
+    nav a:hover,nav a.active{color:#fff;border-color:var(--brand)}
+    nav .logo{color:#fff;font-weight:800;font-size:1rem;letter-spacing:.04em;margin-right:auto;display:flex;align-items:center;gap:.5rem}
+    nav .logo span{color:var(--brand)}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,#1e3a5f 100%);padding:5rem 2rem 4rem;text-align:center;color:#fff;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;background:rgba(232,93,4,.08);pointer-events:none}
+    .hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;border-radius:50%;background:rgba(232,93,4,.06);pointer-events:none}
+    .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:800;margin-bottom:1rem;position:relative}
+    .hero h1 span{color:var(--brand)}
+    .hero p{font-size:1.1rem;color:rgba(255,255,255,.75);max-width:600px;margin:0 auto 2rem;position:relative}
+    .badge-row{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;position:relative}
+    .badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:.35rem 1rem;border-radius:20px;font-size:.8rem;font-weight:500}
+    .badge.orange{background:rgba(232,93,4,.2);border-color:rgba(232,93,4,.4);color:#fdba74}
+
+    /* CARDS SECTION */
+    .section{padding:3.5rem 2rem;max-width:1200px;margin:0 auto}
+    .section-title{font-size:1.5rem;font-weight:700;color:var(--navy);margin-bottom:.5rem}
+    .section-sub{color:var(--muted);margin-bottom:2.5rem;font-size:.95rem}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}
+    .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:2rem;text-decoration:none;color:var(--text);transition:all .25s;position:relative;overflow:hidden}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--brand);transform:scaleX(0);transition:.25s;transform-origin:left}
+    .card:hover{box-shadow:0 8px 30px rgba(0,0,0,.12);transform:translateY(-3px)}
+    .card:hover::before{transform:scaleX(1)}
+    .card-icon{font-size:2.5rem;margin-bottom:1rem;display:block}
+    .card h3{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+    .card p{font-size:.875rem;color:var(--muted);line-height:1.6}
+    .card .tag{display:inline-block;padding:.2rem .65rem;border-radius:20px;font-size:.7rem;font-weight:600;margin-top:1rem}
+    .tag-customer{background:#dcfce7;color:#15803d}
+    .tag-admin{background:#fee2e2;color:#b91c1c}
+    .tag-both{background:#fef3c7;color:#92400e}
+    .card-num{position:absolute;top:1rem;right:1.2rem;font-size:2rem;font-weight:900;color:rgba(0,0,0,.04)}
+
+    /* QUICK LINKS */
+    .quick-links{background:var(--navy);color:#fff;padding:2.5rem 2rem}
+    .quick-links-inner{max-width:1200px;margin:0 auto}
+    .quick-links h2{font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;color:#fff}
+    .link-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem}
+    .link-grid a{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.8);padding:.6rem 1rem;border-radius:8px;text-decoration:none;font-size:.82rem;font-weight:500;transition:.2s;display:flex;align-items:center;gap:.5rem}
+    .link-grid a:hover{background:rgba(232,93,4,.2);border-color:rgba(232,93,4,.4);color:#fff}
+    .link-grid a::before{content:'→';color:var(--brand);font-weight:700}
+
+    footer{background:#0a1628;color:rgba(255,255,255,.4);text-align:center;padding:1.5rem;font-size:.8rem}
+    footer strong{color:rgba(255,255,255,.7)}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">⚙️ <span>SpareParts</span>&nbsp;Guide</div>
+  <a href="index.html" class="active">Home</a>
+  <a href="customer-guide.html">Customer Guide</a>
+  <a href="admin-guide-full.html">Admin Guide</a>
+</nav>
+
+<div class="hero">
+  <h1>Your Complete <span>User Guide</span></h1>
+  <p>Everything you need to know about using the Spare Parts Portal — whether you're a customer looking for parts, or the admin managing the store.</p>
+  <div class="badge-row">
+    <span class="badge">📦 Parts Catalogue</span>
+    <span class="badge">📋 Enquiry System</span>
+    <span class="badge orange">🤖 AI Quote Generator</span>
+    <span class="badge">💬 WhatsApp Alerts</span>
+    <span class="badge">📊 Reports &amp; Analytics</span>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">Choose Your Guide</h2>
+  <p class="section-sub">Select the guide that matches your role. Customers use the website to find and request parts. Admins manage everything behind the scenes.</p>
+
+  <div class="cards">
+    <a href="customer-guide.html" class="card">
+      <span class="card-num">01</span>
+      <span class="card-icon">🛒</span>
+      <h3>Customer / Visitor Guide</h3>
+      <p>How to browse parts, use the enquiry cart, submit a parts request, track your enquiry, and contact the team.</p>
+      <span class="tag tag-customer">For Customers</span>
+    </a>
+    <a href="admin-guide-full.html" class="card">
+      <span class="card-num">02</span>
+      <span class="card-icon">🖥️</span>
+      <h3>Admin Full Guide</h3>
+      <p>Complete walkthrough for administrators — dashboard, products, enquiries, inventory, coupons, SEO, settings and more.</p>
+      <span class="tag tag-admin">For Admin</span>
+    </a>
+    <a href="admin-guide-full.html#enquiries" class="card">
+      <span class="card-num">03</span>
+      <span class="card-icon">📋</span>
+      <h3>Managing Enquiries</h3>
+      <p>Step-by-step guide on receiving, reviewing, and replying to customer enquiries using AI-generated quotes.</p>
+      <span class="tag tag-admin">For Admin</span>
+    </a>
+    <a href="admin-guide-full.html#products" class="card">
+      <span class="card-num">04</span>
+      <span class="card-icon">⚙️</span>
+      <h3>Adding &amp; Managing Parts</h3>
+      <p>How to add new spare parts, upload images, set part codes, manage compatibility, and update stock levels.</p>
+      <span class="tag tag-admin">For Admin</span>
+    </a>
+    <a href="admin-guide-full.html#banners" class="card">
+      <span class="card-num">05</span>
+      <span class="card-icon">🖼️</span>
+      <h3>Homepage &amp; Banners</h3>
+      <p>How to update the homepage hero slider with images or YouTube/MP4 videos, manage categories, and site settings.</p>
+      <span class="tag tag-admin">For Admin</span>
+    </a>
+    <a href="admin-guide-full.html#settings" class="card">
+      <span class="card-num">06</span>
+      <span class="card-icon">⚙️</span>
+      <h3>Settings &amp; Notifications</h3>
+      <p>Configure email (SMTP), WhatsApp notification number, AI quotation keys, and all store settings.</p>
+      <span class="tag tag-admin">For Admin</span>
+    </a>
+  </div>
+</div>
+
+<!-- QUICK TOPIC LINKS -->
+<div class="quick-links">
+  <div class="quick-links-inner">
+    <h2>🔗 Jump to a Topic</h2>
+    <div class="link-grid">
+      <a href="customer-guide.html#browsing">Browsing the Catalogue</a>
+      <a href="customer-guide.html#enquiry-cart">Enquiry Cart</a>
+      <a href="customer-guide.html#submitting">Submitting an Enquiry</a>
+      <a href="customer-guide.html#contact">Contact &amp; WhatsApp</a>
+      <a href="admin-guide-full.html#dashboard">Admin Dashboard</a>
+      <a href="admin-guide-full.html#products">Adding Parts</a>
+      <a href="admin-guide-full.html#categories">Categories</a>
+      <a href="admin-guide-full.html#enquiries">Viewing Enquiries</a>
+      <a href="admin-guide-full.html#ai-quote">AI Quote Generator</a>
+      <a href="admin-guide-full.html#inventory">Inventory / Stock</a>
+      <a href="admin-guide-full.html#coupons">Discount Coupons</a>
+      <a href="admin-guide-full.html#banners">Homepage Banners</a>
+      <a href="admin-guide-full.html#seo">SEO Settings</a>
+      <a href="admin-guide-full.html#emails">Email Templates</a>
+      <a href="admin-guide-full.html#reports">Reports</a>
+      <a href="admin-guide-full.html#settings">Store Settings</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>Spare Parts Portal</strong> — Internal User Guide &nbsp;|&nbsp; For support, contact your administrator.
+</footer>
+</body>
+</html>

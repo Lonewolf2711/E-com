@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Guide — Spare Parts Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --brand:#E85D04;--brand-dark:#C44E02;--navy:#0D1B2A;--navy2:#1B2E45;
+      --text:#1a1a2e;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;
+      --success:#16a34a;--info:#0284c7;
+    }
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+
+    /* NAV */
+    nav{background:var(--navy);padding:0 2rem;display:flex;align-items:center;gap:2rem;height:60px;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--brand)}
+    nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;font-weight:500;padding:.25rem 0;border-bottom:2px solid transparent;transition:.2s}
+    nav a:hover,nav a.active{color:#fff;border-color:var(--brand)}
+    nav .logo{color:#fff;font-weight:800;font-size:1rem;margin-right:auto;display:flex;align-items:center;gap:.5rem}
+    nav .logo span{color:var(--brand)}
+
+    /* SIDEBAR + MAIN */
+    .layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 60px);max-width:1280px;margin:0 auto}
+    .sidebar{background:#fff;border-right:1px solid var(--border);padding:2rem 1.5rem;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    .sidebar h4{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:1.5rem 0 .5rem}
+    .sidebar a{display:block;padding:.4rem .75rem;border-radius:7px;text-decoration:none;color:var(--muted);font-size:.84rem;font-weight:500;transition:.15s;margin-bottom:2px}
+    .sidebar a:hover{background:#f1f5f9;color:var(--text)}
+    .sidebar a.active{background:#fff5ee;color:var(--brand);font-weight:600}
+    .content{padding:2.5rem 3rem 4rem}
+
+    /* HERO BANNER */
+    .hero{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:2.5rem;border-radius:16px;color:#fff;margin-bottom:2.5rem;position:relative;overflow:hidden}
+    .hero::after{content:'🛒';position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-size:5rem;opacity:.1}
+    .hero h1{font-size:1.75rem;font-weight:800;margin-bottom:.5rem}
+    .hero h1 span{color:var(--brand)}
+    .hero p{color:rgba(255,255,255,.75);max-width:560px;font-size:.95rem}
+
+    /* SECTION HEADINGS */
+    h2.sec{font-size:1.4rem;font-weight:700;color:var(--navy);margin:2.5rem 0 .75rem;display:flex;align-items:center;gap:.6rem;scroll-margin-top:72px}
+    h2.sec .icon{background:var(--brand);color:#fff;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    h3.sub{font-size:1rem;font-weight:700;color:var(--navy);margin:1.5rem 0 .5rem}
+
+    /* STEP CARDS */
+    .steps{display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem}
+    .step{display:flex;gap:1rem;background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;align-items:flex-start}
+    .step-num{background:var(--brand);color:#fff;font-weight:800;font-size:.85rem;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.15rem}
+    .step-body h4{font-size:.95rem;font-weight:700;margin-bottom:.25rem}
+    .step-body p{font-size:.875rem;color:var(--muted)}
+
+    /* TIP BOX */
+    .tip{background:#fff7ed;border-left:4px solid var(--brand);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1rem 0;font-size:.875rem}
+    .tip strong{color:var(--brand)}
+    .info{background:#eff6ff;border-left:4px solid var(--info);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1rem 0;font-size:.875rem}
+    .info strong{color:var(--info)}
+    .success{background:#f0fdf4;border-left:4px solid var(--success);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1rem 0;font-size:.875rem}
+    .success strong{color:var(--success)}
+
+    /* TABLE */
+    table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.875rem}
+    th{background:var(--navy);color:#fff;padding:.75rem 1rem;text-align:left;font-weight:600}
+    td{padding:.75rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+    tr:hover td{background:#f8fafc}
+
+    /* FAQ */
+    .faq-item{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:.75rem;overflow:hidden}
+    .faq-q{padding:1rem 1.25rem;font-weight:600;font-size:.9rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+    .faq-q::after{content:'＋';color:var(--muted);font-size:1.1rem}
+    .faq-a{padding:0 1.25rem 1rem;color:var(--muted);font-size:.875rem;display:none}
+
+    /* STATUS BADGE */
+    .status{display:inline-block;padding:.2rem .75rem;border-radius:20px;font-size:.76rem;font-weight:600}
+    .s-new{background:#dbeafe;color:#1d4ed8}
+    .s-ack{background:#fef9c3;color:#854d0e}
+    .s-quoted{background:#dcfce7;color:#15803d}
+    .s-closed{background:#f1f5f9;color:#475569}
+
+    footer{background:var(--navy);color:rgba(255,255,255,.4);text-align:center;padding:1.5rem;font-size:.8rem;margin-top:3rem}
+    footer strong{color:rgba(255,255,255,.7)}
+
+    @media(max-width:768px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--border)}
+      .content{padding:1.5rem}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">⚙️ <span>SpareParts</span>&nbsp;Guide</div>
+  <a href="index.html">Home</a>
+  <a href="customer-guide.html" class="active">Customer Guide</a>
+  <a href="admin-guide-full.html">Admin Guide</a>
+</nav>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h4>Getting Started</h4>
+    <a href="#welcome" class="active">Welcome</a>
+    <a href="#how-it-works">How It Works</a>
+
+    <h4>Using the Website</h4>
+    <a href="#browsing">Browsing Parts</a>
+    <a href="#searching">Searching</a>
+    <a href="#product-page">Part Details Page</a>
+    <a href="#enquiry-cart">Enquiry Cart</a>
+    <a href="#submitting">Submitting Enquiry</a>
+
+    <h4>After Your Enquiry</h4>
+    <a href="#what-happens">What Happens Next</a>
+    <a href="#statuses">Enquiry Statuses</a>
+    <a href="#whatsapp">WhatsApp Replies</a>
+
+    <h4>Contacting Us</h4>
+    <a href="#contact">Contact Page</a>
+    <a href="#faq">FAQs</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <div class="hero">
+      <h1>Customer <span>Guide</span></h1>
+      <p>Everything you need to know as a customer visiting the Spare Parts Portal — from finding the part you need to receiving a quotation.</p>
+    </div>
+
+    <!-- WELCOME -->
+    <h2 class="sec" id="welcome"><span class="icon">👋</span> Welcome</h2>
+    <p>This is an <strong>industrial spare parts portal</strong>. Unlike a regular online shop, you do <strong>not</strong> see prices or place instant orders here. Instead, you:</p>
+    <ol style="margin:1rem 0 1rem 1.5rem;color:var(--muted);font-size:.9rem;line-height:2">
+      <li>Browse or search for the parts you need.</li>
+      <li>Add them to your <strong>Enquiry Cart</strong>.</li>
+      <li>Submit your details — and we send you a <strong>price quotation</strong> within 24 hours.</li>
+    </ol>
+    <div class="info">
+      <strong>ℹ️ No account needed.</strong> You do not need to create an account or log in to submit an enquiry. Just browse and send your request.
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <h2 class="sec" id="how-it-works"><span class="icon">🔄</span> How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Browse or Search</h4>
+          <p>Visit the <strong>Shop</strong> page or the <strong>Homepage</strong> to find parts by category, part code, or machine name.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Add to Enquiry Cart</h4>
+          <p>Click <strong>"Add to Enquiry"</strong> on any part you want. You can add multiple parts from different categories before submitting.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Submit Your Details</h4>
+          <p>When ready, go to your Enquiry Cart and click <strong>"Submit Enquiry."</strong> You'll fill in your name, email, phone number, and any special notes.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Receive Quotation</h4>
+          <p>Our team reviews your enquiry and sends a pricing and availability quote to your <strong>email</strong> (or WhatsApp) within 24 hours.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- BROWSING -->
+    <h2 class="sec" id="browsing"><span class="icon">🔍</span> Browsing the Parts Catalogue</h2>
+    <p>There are several ways to find the part you're looking for:</p>
+
+    <h3 class="sub">Option A — By Category</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Click a Category on the Homepage</h4>
+          <p>The homepage shows a rotating carousel of part categories (like Bearings, Gears, Motors, etc.). Click any category to see all parts in that group.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Use the Left Sidebar on the Shop Page</h4>
+          <p>When you're on the shop page, the left column shows all available categories. Click any to filter.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub">Option B — Use the Shop Page</h3>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">Go to <strong>Shop</strong> from the top navigation. You'll see all available parts. Use the left sidebar to sort by Newest, Name A–Z, or Popular.</p>
+
+    <div class="tip">
+      <strong>💡 Tip:</strong> If you know the part code (e.g. <code>SP-BEAR-001</code>) or machine model (e.g. <code>Sulzer G6300</code>), type it in the search bar for the fastest results.
+    </div>
+
+    <!-- SEARCHING -->
+    <h2 class="sec" id="searching"><span class="icon">🔎</span> Searching for a Part</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Find the Search Bar</h4>
+          <p>Look for the search bar in the website header or on the <strong>Shop</strong> page. It's the box that says "Search parts…"</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Type What You Know</h4>
+          <p>You can search by:
+            <br>• <strong>Part name</strong> — e.g. "deep groove ball bearing"
+            <br>• <strong>Part code</strong> — e.g. "SP-BEAR-001"
+            <br>• <strong>Machine name</strong> — e.g. "Sulzer" or "G6300"
+          </p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Browse the Results</h4>
+          <p>Matching parts will appear. Each card shows the part name, a badge with the part code, and the machine it fits.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <strong>💡 Can't find it?</strong> Don't worry — just use the <strong>Contact page</strong> and describe the part (or attach a photo). Our team can identify and source almost any spare part.
+    </div>
+
+    <!-- PRODUCT PAGE -->
+    <h2 class="sec" id="product-page"><span class="icon">📄</span> Understanding a Part's Detail Page</h2>
+    <p style="margin-bottom:1rem;font-size:.875rem;color:var(--muted)">Clicking on any part card takes you to a full detail page. Here's what you'll find:</p>
+
+    <table>
+      <tr><th>Section</th><th>What It Shows</th></tr>
+      <tr><td><strong>Part Name</strong></td><td>Full name of the spare part</td></tr>
+      <tr><td><strong>Part Code Badge</strong></td><td>The unique code (e.g. SP-BEAR-001) — always note this when contacting us</td></tr>
+      <tr><td><strong>Machine Name</strong></td><td>Which machine this part belongs to</td></tr>
+      <tr><td><strong>Compatible Machines</strong></td><td>Other machines this part works with</td></tr>
+      <tr><td><strong>Description</strong></td><td>Full technical description</td></tr>
+      <tr><td><strong>Gallery Images</strong></td><td>Multiple photos of the part</td></tr>
+      <tr><td><strong>Attributes</strong></td><td>Specifications like dimensions, material, type</td></tr>
+      <tr><td><strong>Availability Badge</strong></td><td>"Available" means it's in stock. "On Request" means it needs to be sourced.</td></tr>
+      <tr><td><strong>Add to Enquiry button</strong></td><td>Click this to add the part to your cart and request a quote</td></tr>
+    </table>
+
+    <div class="info">
+      <strong>ℹ️ About Prices:</strong> Prices are <strong>not shown</strong> on the product page. This is by design — prices depend on quantity, current availability, and your location. You'll receive a formal price quote after submitting your enquiry.
+    </div>
+
+    <!-- ENQUIRY CART -->
+    <h2 class="sec" id="enquiry-cart"><span class="icon">🛒</span> Using the Enquiry Cart</h2>
+    <p style="margin-bottom:1rem;font-size:.875rem;color:var(--muted)">The Enquiry Cart works like a shopping cart, but instead of buying, you're creating a list of parts you want pricing for.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Add Parts</h4>
+          <p>On any part page or in the shop listing, click <strong>"Add to Enquiry"</strong>. The cart icon in the header will show how many items are in your cart.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Open Your Cart</h4>
+          <p>Click the cart icon in the top navigation bar. You'll see all parts you've added, with their part codes and quantities.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Adjust Quantities</h4>
+          <p>In the cart, you can change the <strong>quantity</strong> for each part (e.g. if you need 5 bearings, type 5). The quantity updates automatically when you change the number.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Remove a Part</h4>
+          <p>Click the <strong>red trash icon</strong> (🗑️) next to any part you don't want anymore.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h4>Continue Browsing</h4>
+          <p>You can click <strong>"Continue Shopping"</strong> to go back to the shop and add more parts before submitting.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMITTING -->
+    <h2 class="sec" id="submitting"><span class="icon">📤</span> Submitting Your Enquiry</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Click "Submit Enquiry"</h4>
+          <p>In your Enquiry Cart, click the orange <strong>"Submit Enquiry"</strong> button. A form popup will appear.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Fill In Your Details</h4>
+          <p>The form asks for:
+            <br>• <strong>Full Name</strong> — your name or contact person name
+            <br>• <strong>Email Address</strong> — where we send the quotation
+            <br>• <strong>Phone / WhatsApp Number</strong> — for quick follow-up
+            <br>• <strong>Company Name</strong> — optional
+            <br>• <strong>Message / Special Requirements</strong> — add any notes like "urgent, need within 3 days" or "need OEM part only"
+          </p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>WhatsApp Confirmation</h4>
+          <p>There's a checkbox: <strong>"Send me a confirmation on WhatsApp."</strong> Keep this checked if you want a WhatsApp message confirming we received your enquiry.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Submit</h4>
+          <p>Click <strong>"Submit Enquiry"</strong>. You'll see a green confirmation message with your <strong>Enquiry Number</strong> (e.g. <code>ENQ-0001</code>). Keep this number for your records.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="success">
+      <strong>✅ After submitting:</strong> You'll receive a confirmation email. Our team receives an instant notification and will respond with a quote within <strong>24 hours</strong>.
+    </div>
+
+    <!-- WHAT HAPPENS NEXT -->
+    <h2 class="sec" id="what-happens"><span class="icon">⏳</span> What Happens After You Submit</h2>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">Once your enquiry is submitted, our team receives an alert and works on your case. Here is the journey your enquiry goes through:</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Enquiry Received <span class="status s-new">New</span></h4>
+          <p>Your enquiry has been received and is in our queue. You'll get a confirmation email shortly.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Under Review <span class="status s-ack">Acknowledged</span></h4>
+          <p>Our team has reviewed your part list and is checking stock availability and pricing.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Quotation Sent <span class="status s-quoted">Quoted</span></h4>
+          <p>A formal quotation has been emailed to you. It includes pricing, availability, and lead time for each part.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Closed <span class="status s-closed">Closed</span></h4>
+          <p>The enquiry is complete — either fulfilled or concluded.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHATSAPP -->
+    <h2 class="sec" id="whatsapp"><span class="icon">💬</span> WhatsApp Communication</h2>
+    <p style="margin-bottom:1rem;font-size:.875rem;color:var(--muted)">We support WhatsApp for quick follow-ups. Here's what to expect:</p>
+    <table>
+      <tr><th>What</th><th>When It Happens</th></tr>
+      <tr><td>Confirmation Message</td><td>After you submit an enquiry (if you ticked the WhatsApp box)</td></tr>
+      <tr><td>Quote Follow-up</td><td>Our team may contact you on WhatsApp for faster communication</td></tr>
+      <tr><td>WhatsApp Link on Website</td><td>Contact page shows a direct WhatsApp chat link</td></tr>
+    </table>
+    <div class="tip">
+      <strong>💡 Send a Photo:</strong> If you can't find your part on the website, take a photo of it and send it to us via WhatsApp. Our team can identify it using the photo and machine description.
+    </div>
+
+    <!-- CONTACT -->
+    <h2 class="sec" id="contact"><span class="icon">📞</span> Contact Page</h2>
+    <p style="margin-bottom:1rem;font-size:.875rem;color:var(--muted)">The Contact page gives you another way to reach us — great for custom requirements, bulk orders, or general questions.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Open the Contact Page</h4>
+          <p>Click <strong>"Contact"</strong> in the top navigation, or visit <code>/contact</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Fill the Form</h4>
+          <p>Enter your name, email, and a description of your requirement. You can also include the part code or machine model in the "Part Code / Machine Model" field if you know it.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Other Contact Options</h4>
+          <p>The right side of the Contact page shows our <strong>address, phone number, email, WhatsApp link</strong>, and <strong>working hours</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <h2 class="sec" id="faq"><span class="icon">❓</span> Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">Do I need to create an account?</div>
+      <div class="faq-a">No. You can browse the catalogue and submit an enquiry without creating an account. Just provide your contact details in the enquiry form.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">Why don't I see prices?</div>
+      <div class="faq-a">Prices for industrial spare parts vary depending on the quantity you need, current stock availability, your location, and delivery requirements. We send you an accurate quotation after reviewing your specific requirement.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">How long does it take to receive a quotation?</div>
+      <div class="faq-a">We aim to respond within <strong>24 hours</strong> on working days (Monday to Saturday, 9 AM – 6 PM). For urgent requirements, WhatsApp is the fastest way to reach us.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">What does "Available on Request" mean?</div>
+      <div class="faq-a">Some parts are not kept in stock but can be sourced. "Available on Request" means we don't have it right now, but we can procure it. Contact us for lead time.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">Can I enquire about a part I can't find on the website?</div>
+      <div class="faq-a">Absolutely! Use the <strong>Contact page</strong> or WhatsApp us with the part code, machine name, or a photo. Our team will identify and source the part for you.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">Can I request multiple parts in one enquiry?</div>
+      <div class="faq-a">Yes. Add all the parts you need to your Enquiry Cart and submit them all at once. This is the recommended way — you get a single consolidated quotation for all parts.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">What information should I include in my enquiry?</div>
+      <div class="faq-a">The more details, the better. Include: part name, part code (if you know it), machine name and model, quantity needed, and any urgency notes. A photo is very helpful too.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">I submitted an enquiry but haven't heard back. What should I do?</div>
+      <div class="faq-a">First, check your spam/junk folder. If there's nothing after 24 hours (on a working day), contact us directly on WhatsApp or phone using the number on the Contact page.</div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <strong>Spare Parts Portal</strong> — Customer Guide &nbsp;|&nbsp; For support, contact your administrator.
+</footer>
+
+<script>
+function toggle(el){
+  const answer=el.nextElementSibling;
+  const isOpen=answer.style.display==='block';
+  document.querySelectorAll('.faq-a').forEach(a=>a.style.display='none');
+  document.querySelectorAll('.faq-q').forEach(q=>q.style.setProperty('--after','＋'));
+  if(!isOpen){answer.style.display='block';el.style.fontWeight='700';}
+}
+
+// Highlight sidebar links on scroll
+const links=document.querySelectorAll('.sidebar a');
+const sections=document.querySelectorAll('h2.sec');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-100)current=s.id;});
+  links.forEach(l=>{l.classList.remove('active');if(l.getAttribute('href')==='#'+current)l.classList.add('active');});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Guide — Spare Parts Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --brand:#E85D04;--brand-dark:#C44E02;--navy:#0D1B2A;--navy2:#1B2E45;
+      --text:#1a1a2e;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;
+      --success:#16a34a;--info:#0284c7;--warn:#d97706;--danger:#dc2626;
+    }
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+
+    /* NAV */
+    nav{background:var(--navy);padding:0 2rem;display:flex;align-items:center;gap:2rem;height:60px;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--brand)}
+    nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;font-weight:500;padding:.25rem 0;border-bottom:2px solid transparent;transition:.2s}
+    nav a:hover,nav a.active{color:#fff;border-color:var(--brand)}
+    nav .logo{color:#fff;font-weight:800;font-size:1rem;margin-right:auto;display:flex;align-items:center;gap:.5rem}
+    nav .logo span{color:var(--brand)}
+
+    /* LAYOUT */
+    .layout{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 60px);max-width:1340px;margin:0 auto}
+
+    /* SIDEBAR */
+    .sidebar{background:#fff;border-right:1px solid var(--border);padding:1.5rem 1rem;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    .sidebar h4{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:1.25rem 0 .4rem .5rem}
+    .sidebar a{display:flex;align-items:center;gap:.5rem;padding:.38rem .75rem;border-radius:7px;text-decoration:none;color:var(--muted);font-size:.82rem;font-weight:500;transition:.15s;margin-bottom:1px}
+    .sidebar a:hover{background:#f1f5f9;color:var(--text)}
+    .sidebar a.active{background:#fff5ee;color:var(--brand);font-weight:600}
+    .sidebar a .dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+    /* CONTENT */
+    .content{padding:2.5rem 3rem 5rem;max-width:960px}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:2.5rem;border-radius:16px;color:#fff;margin-bottom:2.5rem;position:relative;overflow:hidden}
+    .hero::after{content:'🖥️';position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-size:5rem;opacity:.1}
+    .hero h1{font-size:1.8rem;font-weight:800;margin-bottom:.5rem}
+    .hero h1 span{color:var(--brand)}
+    .hero p{color:rgba(255,255,255,.75);max-width:580px;font-size:.95rem}
+
+    /* SECTION */
+    h2.sec{font-size:1.35rem;font-weight:800;color:var(--navy);margin:2.5rem 0 .75rem;display:flex;align-items:center;gap:.65rem;scroll-margin-top:75px;padding-bottom:.5rem;border-bottom:2px solid var(--border)}
+    h2.sec .ic{background:var(--brand);color:#fff;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+    h3.sub{font-size:1rem;font-weight:700;color:var(--navy);margin:1.75rem 0 .5rem;display:flex;align-items:center;gap:.5rem}
+    h3.sub::before{content:'▶';color:var(--brand);font-size:.6rem}
+
+    /* STEPS */
+    .steps{display:flex;flex-direction:column;gap:.85rem;margin:1rem 0}
+    .step{display:grid;grid-template-columns:32px 1fr;gap:.9rem;background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.25rem;align-items:flex-start}
+    .step-n{background:var(--brand);color:#fff;font-weight:800;font-size:.8rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem}
+    .step h4{font-size:.9rem;font-weight:700;margin-bottom:.2rem}
+    .step p,.step ul{font-size:.85rem;color:var(--muted)}
+    .step ul{margin-left:1rem;line-height:2}
+
+    /* BOXES */
+    .tip{background:#fff7ed;border-left:4px solid var(--brand);border-radius:0 10px 10px 0;padding:.9rem 1.2rem;margin:.9rem 0;font-size:.85rem}
+    .tip strong{color:var(--brand)}
+    .info{background:#eff6ff;border-left:4px solid var(--info);border-radius:0 10px 10px 0;padding:.9rem 1.2rem;margin:.9rem 0;font-size:.85rem}
+    .info strong{color:var(--info)}
+    .warn{background:#fffbeb;border-left:4px solid var(--warn);border-radius:0 10px 10px 0;padding:.9rem 1.2rem;margin:.9rem 0;font-size:.85rem}
+    .warn strong{color:var(--warn)}
+    .danger{background:#fef2f2;border-left:4px solid var(--danger);border-radius:0 10px 10px 0;padding:.9rem 1.2rem;margin:.9rem 0;font-size:.85rem}
+    .danger strong{color:var(--danger)}
+    .success{background:#f0fdf4;border-left:4px solid var(--success);border-radius:0 10px 10px 0;padding:.9rem 1.2rem;margin:.9rem 0;font-size:.85rem}
+    .success strong{color:var(--success)}
+
+    /* TABLE */
+    table{width:100%;border-collapse:collapse;margin:.75rem 0 1.25rem;font-size:.85rem}
+    th{background:var(--navy);color:#fff;padding:.65rem 1rem;text-align:left;font-weight:600;font-size:.8rem}
+    td{padding:.65rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+    tr:hover td{background:#f8fafc}
+    code{background:#f1f5f9;color:var(--brand-dark);padding:.1rem .4rem;border-radius:4px;font-size:.8rem;font-family:monospace}
+
+    /* BADGES */
+    .badge{display:inline-block;padding:.15rem .6rem;border-radius:20px;font-size:.72rem;font-weight:600}
+    .b-green{background:#dcfce7;color:#15803d}
+    .b-yellow{background:#fef9c3;color:#854d0e}
+    .b-red{background:#fee2e2;color:#b91c1c}
+    .b-blue{background:#dbeafe;color:#1d4ed8}
+    .b-gray{background:#f1f5f9;color:#475569}
+    .b-orange{background:#fff7ed;color:#c2410c}
+
+    /* CARD GRID */
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin:1rem 0}
+    .mini-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.25rem;font-size:.85rem}
+    .mini-card .label{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.35rem}
+    .mini-card .value{font-weight:700;font-size:1.1rem;color:var(--navy)}
+
+    /* PATH DISPLAY */
+    .path{background:var(--navy);color:#e2e8f0;padding:.5rem 1rem;border-radius:8px;font-family:monospace;font-size:.82rem;margin:.5rem 0 1rem;display:inline-block}
+    .path span{color:var(--brand)}
+
+    /* FIELD REFERENCE */
+    .field-table tr td:first-child{font-weight:600;color:var(--navy);width:35%}
+
+    footer{background:var(--navy);color:rgba(255,255,255,.4);text-align:center;padding:1.5rem;font-size:.8rem;margin-top:3rem}
+    footer strong{color:rgba(255,255,255,.7)}
+
+    @media(max-width:900px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--border);display:none}
+      .content{padding:1.5rem}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">⚙️ <span>SpareParts</span>&nbsp;Guide</div>
+  <a href="index.html">Home</a>
+  <a href="customer-guide.html">Customer Guide</a>
+  <a href="admin-guide-full.html" class="active">Admin Guide</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <h4>Overview</h4>
+    <a href="#getting-in"><span class="dot"></span>Logging In</a>
+    <a href="#dashboard"><span class="dot"></span>Dashboard</a>
+
+    <h4>Catalogue Management</h4>
+    <a href="#products"><span class="dot"></span>Parts / Products</a>
+    <a href="#categories"><span class="dot"></span>Categories</a>
+    <a href="#inventory"><span class="dot"></span>Inventory / Stock</a>
+
+    <h4>Enquiries</h4>
+    <a href="#enquiries"><span class="dot"></span>Viewing Enquiries</a>
+    <a href="#enquiry-detail"><span class="dot"></span>Enquiry Detail</a>
+    <a href="#ai-quote"><span class="dot"></span>AI Quote Generator</a>
+    <a href="#emails"><span class="dot"></span>Email Templates</a>
+
+    <h4>Customers &amp; Contacts</h4>
+    <a href="#customers"><span class="dot"></span>Customers</a>
+    <a href="#contacts"><span class="dot"></span>Contact Messages</a>
+
+    <h4>Marketing</h4>
+    <a href="#banners"><span class="dot"></span>Homepage Banners</a>
+    <a href="#coupons"><span class="dot"></span>Discount Coupons</a>
+
+    <h4>Analytics</h4>
+    <a href="#reports"><span class="dot"></span>Reports</a>
+
+    <h4>Technical</h4>
+    <a href="#seo"><span class="dot"></span>SEO Settings</a>
+    <a href="#settings"><span class="dot"></span>Store Settings</a>
+    <a href="#smtp"><span class="dot"></span>Email (SMTP)</a>
+    <a href="#whatsapp-setup"><span class="dot"></span>WhatsApp Setup</a>
+    <a href="#ai-setup"><span class="dot"></span>AI Setup (Groq)</a>
+  </aside>
+
+  <main class="content">
+
+    <div class="hero">
+      <h1>Admin <span>Complete Guide</span></h1>
+      <p>Everything you need to manage the Spare Parts Portal — from adding parts and handling enquiries to configuring email, WhatsApp, and AI quotation generation.</p>
+    </div>
+
+    <!-- ═══════════════════════════════════ LOGGING IN ═══════════════════════════ -->
+    <h2 class="sec" id="getting-in"><span class="ic">🔐</span> Logging Into the Admin Panel</h2>
+    <div class="path">Go to: <span>yourwebsite.com</span>/admin</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div>
+          <h4>Open the Admin Login Page</h4>
+          <p>In your browser, go to your website address followed by <code>/admin</code>. Example: <code>http://localhost/E-com/admin</code></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div>
+          <h4>Enter Your Credentials</h4>
+          <p>Enter your <strong>Email Address</strong> and <strong>Password</strong>. These are set up during installation. If you've forgotten your password, contact your web developer.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div>
+          <h4>You're In!</h4>
+          <p>After logging in, you'll land on the <strong>Dashboard</strong> — your main control centre.</p>
+        </div>
+      </div>
+    </div>
+    <div class="tip"><strong>💡 Tip:</strong> Always log out when you're done, especially on shared computers. Use the logout option in the top-right of the admin panel.</div>
+
+
+    <!-- ═══════════════════════════════════ DASHBOARD ═══════════════════════════ -->
+    <h2 class="sec" id="dashboard"><span class="ic">📊</span> The Dashboard</h2>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">The Dashboard is the first thing you see when you log in. It gives you a quick overview of what's happening in your store.</p>
+
+    <h3 class="sub">Stats Cards (at the top)</h3>
+    <div class="card-grid">
+      <div class="mini-card"><div class="label">Total Enquiries</div><div class="value">📋 Enquiries</div><p style="font-size:.8rem;color:var(--muted);margin-top:.4rem">Total number of enquiries ever received.</p></div>
+      <div class="mini-card"><div class="label">Parts Listed</div><div class="value">⚙️ Products</div><p style="font-size:.8rem;color:var(--muted);margin-top:.4rem">How many spare parts are in the catalogue.</p></div>
+      <div class="mini-card"><div class="label">Active Categories</div><div class="value">🏷️ Categories</div><p style="font-size:.8rem;color:var(--muted);margin-top:.4rem">Part categories currently active.</p></div>
+      <div class="mini-card"><div class="label">Most Enquired</div><div class="value">🔝 Top Parts</div><p style="font-size:.8rem;color:var(--muted);margin-top:.4rem">Parts that have received the most enquiry interest.</p></div>
+    </div>
+
+    <h3 class="sub">Monthly Enquiries Chart</h3>
+    <p style="font-size:.875rem;color:var(--muted)">A bar chart showing how many enquiries came in each month. The green line shows parts viewed. Use this to see busy and slow periods.</p>
+
+    <h3 class="sub">Quick Stats Panel (right side)</h3>
+    <table>
+      <tr><th>Stat</th><th>What It Means</th></tr>
+      <tr><td><span class="badge b-yellow">New Enquiries</span></td><td>Enquiries that have been submitted but not yet reviewed</td></tr>
+      <tr><td><span class="badge b-blue">In Progress</span></td><td>Enquiries your team is currently working on</td></tr>
+      <tr><td><span class="badge b-red">Low Stock Parts</span></td><td>Parts running low — click to manage inventory</td></tr>
+      <tr><td><span class="badge b-gray">SEO Needed</span></td><td>Products that don't have SEO meta information yet</td></tr>
+    </table>
+
+    <h3 class="sub">Recent Enquiries Table</h3>
+    <p style="font-size:.875rem;color:var(--muted)">Shows the last few enquiries received. Click any row to open the full enquiry detail.</p>
+
+    <h3 class="sub">Low Stock Alert (bottom)</h3>
+    <p style="font-size:.875rem;color:var(--muted)">If any parts are running low on stock, a red alert table appears at the bottom listing those parts. Click <strong>Manage Inventory</strong> to go update stock levels.</p>
+
+    <h3 class="sub">Quick Action Buttons</h3>
+    <p style="font-size:.875rem;color:var(--muted)">At the top of the dashboard, you'll see shortcut buttons:</p>
+    <table>
+      <tr><th>Button</th><th>What It Does</th></tr>
+      <tr><td>➕ Add New Part</td><td>Takes you straight to the form to add a new spare part</td></tr>
+      <tr><td>📋 View Enquiries</td><td>Opens your full enquiries list</td></tr>
+      <tr><td>🎬 Add Hero Banner</td><td>Add a new slide to the homepage hero slider</td></tr>
+      <tr><td>⚙️ Settings</td><td>Open store settings</td></tr>
+      <tr><td>🌐 View Live Website</td><td>Opens your live website in a new tab</td></tr>
+    </table>
+
+
+    <!-- ═══════════════════════════════════ PRODUCTS ═══════════════════════════ -->
+    <h2 class="sec" id="products"><span class="ic">⚙️</span> Managing Parts (Products)</h2>
+    <div class="path">Admin → <span>Products</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">This is where you manage your entire spare parts catalogue — add, edit, and delete parts.</p>
+
+    <h3 class="sub">Adding a New Part</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div>
+          <h4>Click "Add New Part" or "+ Add Product"</h4>
+          <p>From the dashboard (quick action) or Products page, click the button to open the add product form.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div>
+          <h4>Fill In: Product Information</h4>
+          <ul>
+            <li><strong>Product Name</strong> ⭐ Required — the full name of the part</li>
+            <li><strong>Part Code</strong> ⭐ Required — unique customer-facing code (e.g. <code>SP-BEAR-001</code>). This is what customers search for and mention in enquiries.</li>
+            <li><strong>Machine Name</strong> — main machine this part belongs to</li>
+            <li><strong>Machine Model</strong> — specific model number (e.g. G6300)</li>
+            <li><strong>Compatible Machines</strong> — comma-separated list of all machines this part works with</li>
+            <li><strong>Short Description</strong> — one-line summary (max 255 characters)</li>
+            <li><strong>Full Description</strong> — detailed technical description</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div>
+          <h4>Fill In: Pricing &amp; Availability</h4>
+          <ul>
+            <li><strong>Internal Price (₹)</strong> — your cost/reference price. <strong>Not shown to customers.</strong></li>
+            <li><strong>Sale/Quoted Price (₹)</strong> — used internally for quote calculations. Still not public.</li>
+            <li><strong>Stock Quantity</strong> — number of units available</li>
+            <li><strong>Internal SKU / Reference Code</strong> — your internal reference (different from the public Part Code)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <div>
+          <h4>Upload Images</h4>
+          <ul>
+            <li><strong>Main Image</strong> — the primary photo shown on cards and the detail page</li>
+            <li><strong>Gallery Images</strong> — additional photos (multiple files at once)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">5</div>
+        <div>
+          <h4>Add Attributes (Optional but Recommended)</h4>
+          <p>Click <strong>"+ Add"</strong> to create attribute pairs like:</p>
+          <ul>
+            <li>Name: <code>Inner Diameter</code> — Value: <code>25mm</code></li>
+            <li>Name: <code>Material</code> — Value: <code>Chrome Steel</code></li>
+            <li>Name: <code>Standard</code> — Value: <code>ISO 6206</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">6</div>
+        <div>
+          <h4>SEO Information (Recommended)</h4>
+          <ul>
+            <li><strong>Meta Title</strong> — what appears in Google search results (max 70 characters). Include part code and machine name.</li>
+            <li><strong>Meta Description</strong> — the description shown below the title in Google (max 160 characters)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">7</div>
+        <div>
+          <h4>Sidebar Settings</h4>
+          <ul>
+            <li><strong>Category</strong> ⭐ Required — select the category this part belongs to</li>
+            <li><strong>Status</strong> — Active = visible on website. Inactive = hidden.</li>
+            <li><strong>Featured Product</strong> — tick this to show the part in the "Featured" section on the homepage</li>
+            <li><strong>Available on Request</strong> — tick this if the part isn't in stock but can be sourced. Shows "On Request" badge.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">8</div>
+        <div>
+          <h4>Save the Part</h4>
+          <p>Click <strong>"Create Product"</strong> (or "Update Product" if editing). The part will appear in the catalogue immediately.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="warn">
+      <strong>⚠️ Part Code Tips:</strong> Use a consistent format like <code>[TYPE]-[CATEGORY]-[NUMBER]</code> (e.g. <code>SP-BEAR-001</code> for spare part, bearing, number 1). This helps customers find parts by code and helps with Google search.
+    </div>
+
+    <h3 class="sub">Editing an Existing Part</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Go to Admin → Products</h4><p>You'll see a list of all parts.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Click "Edit" on the Part</h4><p>The edit form opens — identical to the add form, but pre-filled with existing data.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><h4>Make Changes and Save</h4><p>Update what you need and click <strong>"Update Product."</strong></p></div>
+      </div>
+    </div>
+
+    <h3 class="sub">Deleting a Part</h3>
+    <p style="font-size:.875rem;color:var(--muted)">On the Products list, find the part and click the <strong>Delete</strong> button. You'll be asked to confirm. Once deleted, the part is removed from the catalogue.</p>
+    <div class="danger"><strong>⚠️ Warning:</strong> Deleting a part is permanent. If a product is linked to past enquiries, you may want to set it to <strong>Inactive</strong> instead of deleting it.</div>
+
+
+    <!-- ═══════════════════════════════════ CATEGORIES ═══════════════════════════ -->
+    <h2 class="sec" id="categories"><span class="ic">🏷️</span> Managing Categories</h2>
+    <div class="path">Admin → <span>Categories</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">Categories organise your parts. Examples: Bearings, Gears, Drive Belts, Sensors, Motors.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Add a New Category</h4><p>Click <strong>"+ Add Category."</strong> Enter a name, upload an icon/image, and optionally a parent category if you want sub-categories.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Category Fields</h4>
+          <ul>
+            <li><strong>Name</strong> — e.g. "Bearings"</li>
+            <li><strong>Slug</strong> — auto-generated URL-friendly name (e.g. <code>bearings</code>)</li>
+            <li><strong>Image</strong> — icon that appears on the homepage category carousel</li>
+            <li><strong>Parent Category</strong> — for sub-categories</li>
+            <li><strong>Status</strong> — Active or Inactive</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><h4>Remove a Category</h4><p>Only do this if the category has no products. Products must be moved to another category first.</p></div>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════ INVENTORY ═══════════════════════════ -->
+    <h2 class="sec" id="inventory"><span class="ic">📦</span> Inventory / Stock Management</h2>
+    <div class="path">Admin → <span>Inventory</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">The Inventory page lets you quickly update stock levels for all parts without going into each product's edit form.</p>
+
+    <h3 class="sub">Understanding Stock Colours</h3>
+    <table>
+      <tr><th>Badge Colour</th><th>Meaning</th></tr>
+      <tr><td><span class="badge b-green">Green Number</span></td><td>Healthy stock — plenty available</td></tr>
+      <tr><td><span class="badge b-yellow">Yellow Number</span></td><td>Low stock — getting close to the threshold</td></tr>
+      <tr><td><span class="badge b-red">Red Number</span></td><td>Out of stock or at zero — urgent restock needed</td></tr>
+    </table>
+
+    <h3 class="sub">Quick Stock Adjustment</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Find the Part</h4><p>Use the search bar to find by part name or SKU code.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Choose the Operation</h4>
+          <ul>
+            <li><strong>+ (Add)</strong> — add units to current stock (e.g. received new shipment)</li>
+            <li><strong>– (Subtract)</strong> — remove units from current stock</li>
+            <li><strong>= (Set)</strong> — set the stock to an exact number</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><h4>Enter the Quantity and Click "Update"</h4><p>The stock level updates immediately.</p></div>
+      </div>
+    </div>
+
+    <h3 class="sub">Low Stock Alert Page</h3>
+    <p style="font-size:.875rem;color:var(--muted)">Click <strong>"Low Stock Alerts"</strong> button to see only the parts that are running low. This is also shown on the dashboard.</p>
+
+
+    <!-- ═══════════════════════════════════ ENQUIRIES ═══════════════════════════ -->
+    <h2 class="sec" id="enquiries"><span class="ic">📋</span> Viewing Enquiries</h2>
+    <div class="path">Admin → <span>Enquiries</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">The Enquiries list shows all customer enquiries received. This is where most of your daily work happens.</p>
+
+    <h3 class="sub">Enquiry List Overview</h3>
+    <table>
+      <tr><th>Column</th><th>What It Shows</th></tr>
+      <tr><td>Enquiry #</td><td>Unique reference like <code>ENQ-0001</code></td></tr>
+      <tr><td>Contact Name</td><td>Customer's name (or "Guest" if not logged in)</td></tr>
+      <tr><td>Parts Count</td><td>How many different parts they enquired about</td></tr>
+      <tr><td>Status</td><td>Current stage of the enquiry</td></tr>
+      <tr><td>Date</td><td>When the enquiry was submitted</td></tr>
+    </table>
+
+    <div class="tip"><strong>💡 Quick Tip:</strong> Click anywhere on an enquiry row to open the full detail view.</div>
+
+    <h3 class="sub">Enquiry Statuses Explained</h3>
+    <table>
+      <tr><th>Status</th><th>What It Means</th><th>Action Needed</th></tr>
+      <tr><td><span class="badge b-blue">New</span></td><td>Just received, not reviewed yet</td><td>Open it and review the parts</td></tr>
+      <tr><td><span class="badge b-yellow">Acknowledged</span></td><td>You've seen it and are working on it</td><td>Prepare the quotation</td></tr>
+      <tr><td><span class="badge b-green">Quoted</span></td><td>Quotation has been sent to the customer</td><td>Wait for customer response</td></tr>
+      <tr><td><span class="badge b-gray">Closed</span></td><td>Process is complete</td><td>No action needed</td></tr>
+    </table>
+
+
+    <!-- ═══════════════════════════════════ ENQUIRY DETAIL ═══════════════════════ -->
+    <h2 class="sec" id="enquiry-detail"><span class="ic">🔍</span> Enquiry Detail Page</h2>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">When you click on an enquiry, you see the full detail page. It has everything in one place.</p>
+
+    <h3 class="sub">Left Panel — Customer &amp; Parts</h3>
+    <table class="field-table">
+      <tr><th>Section</th><th>What You Find</th></tr>
+      <tr><td>Customer Details</td><td>Full name, company, email (clickable), phone/WhatsApp (clickable with WhatsApp button)</td></tr>
+      <tr><td>Enquired Parts Table</td><td>List of all parts requested — name, part code, and quantity</td></tr>
+      <tr><td>Enquiry Progress Bar</td><td>Visual timeline showing which stage the enquiry is at</td></tr>
+    </table>
+
+    <h3 class="sub">Changing the Enquiry Status</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Find the Status Dropdown</h4><p>At the top right of the enquiry detail page, there's a dropdown showing the current status.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Select the New Status</h4><p>Choose New → Acknowledged → Quoted → Closed in order as you progress.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><h4>Click "Update Status"</h4><p>The status saves immediately and updates the progress bar.</p></div>
+      </div>
+    </div>
+
+    <h3 class="sub">Right Panel — Email &amp; AI Tools</h3>
+    <p style="font-size:.875rem;color:var(--muted)">The right panel has two powerful tools for responding to enquiries:</p>
+    <ol style="margin:1rem 0 1rem 1.5rem;font-size:.875rem;color:var(--muted);line-height:2.2">
+      <li><strong>Load from Template</strong> — pick a pre-written email template and load it instantly</li>
+      <li><strong>AI Quote Generator</strong> — let the AI write a professional quotation email for you</li>
+    </ol>
+
+    <h3 class="sub">Quick Contact Buttons</h3>
+    <p style="font-size:.875rem;color:var(--muted)">Below the email tools, there are one-click buttons to <strong>email the customer</strong> or <strong>open WhatsApp</strong> with their number pre-filled.</p>
+
+
+    <!-- ═══════════════════════════════════ AI QUOTE ═══════════════════════════ -->
+    <h2 class="sec" id="ai-quote"><span class="ic">🤖</span> AI Quote Generator</h2>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">The AI can automatically write a professional quotation email based on the enquiry details. This saves time and ensures a professional tone.</p>
+
+    <div class="info"><strong>ℹ️ Requirement:</strong> To use the AI generator, you need a Groq API key configured in Settings. See the <a href="#ai-setup">AI Setup section</a> for how to get one (it's free).</div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Open Any Enquiry</h4><p>Go to Admin → Enquiries → click on any enquiry to open its detail page.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Choose a Tone</h4>
+          <p>In the AI section on the right, select the email tone:</p>
+          <ul>
+            <li><strong>Formal &amp; Professional</strong> — for corporate clients</li>
+            <li><strong>Friendly &amp; Helpful</strong> — for regular customers</li>
+            <li><strong>Follow-up / Reminder</strong> — when following up on a pending quote</li>
+            <li><strong>Urgent / Time-sensitive</strong> — for rush requirements</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><h4>Add Notes (Optional)</h4><p>Type any specific information in the "Additional Notes" box. For example: <em>"Price valid for 7 days. Delivery 3–5 working days. Minimum order 10 units."</em></p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <div><h4>Click "Generate with Groq AI"</h4><p>The system sends the enquiry details to the AI. In a few seconds, a complete email — with Subject and Body — will appear.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">5</div>
+        <div><h4>Review and Edit</h4><p>Read through the generated email. Edit the Subject or Body in the text boxes if anything needs changing. The AI always uses the customer's name and part details automatically.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">6</div>
+        <div><h4>Send or Copy</h4>
+          <ul>
+            <li><strong>"Copy"</strong> — copies the email text to your clipboard to paste into your own email client</li>
+            <li><strong>"Send to Customer"</strong> — sends the email directly to the customer via the system (requires SMTP configured)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════ EMAIL TEMPLATES ═══════════════════════ -->
+    <h2 class="sec" id="emails"><span class="ic">✉️</span> Email Templates</h2>
+    <div class="path">Admin → <span>Email Templates</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">Email Templates let you create reusable email responses. Instead of writing the same message every time, you save it as a template and load it with one click.</p>
+
+    <h3 class="sub">Creating a Template</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Click "+ Add Template"</h4><p>Go to Admin → Email Templates and click the add button.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Fill In the Template</h4>
+          <ul>
+            <li><strong>Name</strong> — internal name to identify it (e.g. "Standard Quotation Reply")</li>
+            <li><strong>Type</strong> — choose "Enquiry" for templates used in enquiry responses</li>
+            <li><strong>Subject</strong> — the email subject line</li>
+            <li><strong>Body</strong> — the full email content. Use placeholders:</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub">Placeholders You Can Use</h3>
+    <table>
+      <tr><th>Placeholder</th><th>What It Inserts</th></tr>
+      <tr><td><code>{{customer_name}}</code></td><td>Customer's full name</td></tr>
+      <tr><td><code>{{enquiry_number}}</code></td><td>The enquiry reference number (e.g. ENQ-0001)</td></tr>
+      <tr><td><code>{{customer_email}}</code></td><td>Customer's email address</td></tr>
+      <tr><td><code>{{customer_phone}}</code></td><td>Customer's phone number</td></tr>
+      <tr><td><code>{{customer_company}}</code></td><td>Customer's company name</td></tr>
+    </table>
+
+    <h3 class="sub">Using a Template on an Enquiry</h3>
+    <p style="font-size:.875rem;color:var(--muted)">On the enquiry detail page (right panel), you'll see a <strong>"Load from Template"</strong> section. Select your template from the dropdown and click <strong>"Load"</strong> — the email is pre-filled with all placeholders replaced.</p>
+
+
+    <!-- ═══════════════════════════════════ CUSTOMERS ═══════════════════════════ -->
+    <h2 class="sec" id="customers"><span class="ic">👥</span> Customers</h2>
+    <div class="path">Admin → <span>Customers</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">The Customers section shows everyone who has registered an account or placed an order on your store.</p>
+    <table>
+      <tr><th>Column</th><th>Meaning</th></tr>
+      <tr><td>Name</td><td>Customer's full name</td></tr>
+      <tr><td>Email</td><td>Their registered email</td></tr>
+      <tr><td>Phone</td><td>Contact number</td></tr>
+      <tr><td>Total Orders</td><td>Number of orders placed</td></tr>
+      <tr><td>Registered</td><td>When they created their account</td></tr>
+    </table>
+    <p style="font-size:.875rem;color:var(--muted)">Click on any customer to see their full profile and order/enquiry history.</p>
+
+
+    <!-- ═══════════════════════════════════ CONTACTS ═══════════════════════════ -->
+    <h2 class="sec" id="contacts"><span class="ic">📩</span> Contact Messages</h2>
+    <div class="path">Admin → <span>Contacts</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">This section shows all messages submitted via the <strong>Contact page</strong> on your website (the general enquiry form with name, email, message).</p>
+    <table>
+      <tr><th>Column</th><th>What It Shows</th></tr>
+      <tr><td>Name</td><td>Person who sent the message</td></tr>
+      <tr><td>Email</td><td>Their contact email</td></tr>
+      <tr><td>Subject</td><td>Part code or machine model they mentioned</td></tr>
+      <tr><td>Message</td><td>Their requirement or question</td></tr>
+      <tr><td>Date</td><td>When the message was sent</td></tr>
+    </table>
+    <p style="font-size:.875rem;color:var(--muted)">Click on any message to read it in full. Reply directly to their email using your email client.</p>
+
+
+    <!-- ═══════════════════════════════════ BANNERS ═══════════════════════════ -->
+    <h2 class="sec" id="banners"><span class="ic">🖼️</span> Homepage Banners</h2>
+    <div class="path">Admin → <span>Banners</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">Banners control the large hero slider at the top of your homepage. You can add image slides or video slides (YouTube or MP4).</p>
+
+    <h3 class="sub">Adding a New Banner Slide</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Click "+ Add Banner"</h4><p>Opens the banner creation form.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Banner Content</h4>
+          <ul>
+            <li><strong>Title</strong> — the large heading text on the slide (e.g. "Precision Parts. Fast Quotations.")</li>
+            <li><strong>Subtitle</strong> — small text that appears above the title (e.g. "Industrial Spare Parts")</li>
+            <li><strong>Description</strong> — a short paragraph below the title</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><h4>Call to Action Button</h4>
+          <ul>
+            <li><strong>Button Text</strong> — what the button says (e.g. "Browse Parts")</li>
+            <li><strong>Button Link</strong> — where it goes when clicked (e.g. <code>/shop</code> or <code>/category/bearings</code>)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <div><h4>Choose Media Type: Image or Video</h4>
+          <ul>
+            <li><strong>Image Slide</strong> — upload a photo (recommended size: 1920×600px)</li>
+            <li><strong>Video Slide</strong> — paste a YouTube link (e.g. <code>https://youtu.be/XXXXXXXXXXX</code>) or upload an MP4 file (max 50MB)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">5</div>
+        <div><h4>Settings</h4>
+          <ul>
+            <li><strong>Position</strong> — choose "Hero Slider" (the main scrolling slideshow)</li>
+            <li><strong>Sort Order</strong> — lower number = appears first in the slideshow</li>
+            <li><strong>Status</strong> — Active = shown on website. Inactive = hidden.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">6</div>
+        <div><h4>Save and Check Live</h4><p>Click <strong>"Create Banner"</strong> and then click <strong>"View Live Website"</strong> on the dashboard to see it.</p></div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <strong>💡 Slideshow:</strong> If you add multiple banners with Position = "Hero Slider," they automatically become a slideshow that rotates every 5.5 seconds with smooth fade transitions.
+    </div>
+    <div class="info">
+      <strong>ℹ️ Video Tips:</strong> YouTube videos play muted and looped as backgrounds. If using an MP4, keep it under 50MB. The slide always has a dark overlay so your text stays readable.
+    </div>
+
+
+    <!-- ═══════════════════════════════════ COUPONS ═══════════════════════════ -->
+    <h2 class="sec" id="coupons"><span class="ic">🎟️</span> Discount Coupons</h2>
+    <div class="path">Admin → <span>Coupons</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">Create discount codes that customers can use at checkout.</p>
+
+    <h3 class="sub">Creating a Coupon</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Click "+ Add Coupon"</h4><p>A popup form appears.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Fill In the Coupon Details</h4>
+          <table>
+            <tr><th>Field</th><th>Meaning &amp; Example</th></tr>
+            <tr><td>Coupon Code</td><td>What customers type at checkout (e.g. <code>SUMMER20</code>). Always uppercase.</td></tr>
+            <tr><td>Discount Type</td><td><strong>Percentage (%)</strong> — takes a % off the total. <strong>Fixed Amount</strong> — deducts a flat ₹ amount.</td></tr>
+            <tr><td>Discount Value</td><td>The amount. E.g. 20 for 20% off. Or 500 for ₹500 off.</td></tr>
+            <tr><td>Max Discount</td><td>For percentage type: caps the maximum discount (e.g. max ₹1000 off). Leave 0 for no cap.</td></tr>
+            <tr><td>Min Order Amount</td><td>Minimum cart value before coupon can be used. Leave 0 for no minimum.</td></tr>
+            <tr><td>Max Uses</td><td>How many times this code can be used total. Leave 0 for unlimited.</td></tr>
+            <tr><td>Expiry Date</td><td>When the coupon expires. After this date, the code no longer works.</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><h4>Click "Create Coupon"</h4><p>The coupon is now active and customers can use it at checkout.</p></div>
+      </div>
+    </div>
+
+    <h3 class="sub">Coupon Performance</h3>
+    <p style="font-size:.875rem;color:var(--muted)">Click <strong>"Performance"</strong> button on the Coupons page to see which coupons have been used most and the total discount given.</p>
+
+    <h3 class="sub">Deactivating or Deleting a Coupon</h3>
+    <p style="font-size:.875rem;color:var(--muted)">On the coupons list, click the red trash icon 🗑️ to delete a coupon entirely. Once deleted, the code no longer works for customers.</p>
+
+
+    <!-- ═══════════════════════════════════ REPORTS ═══════════════════════════ -->
+    <h2 class="sec" id="reports"><span class="ic">📈</span> Reports</h2>
+    <div class="path">Admin → <span>Reports</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">Reports give you data about your business performance. There are three report types.</p>
+
+    <h3 class="sub">Sales Report</h3>
+    <p style="font-size:.875rem;color:var(--muted)">Shows revenue and orders over time. Select a period (Last 7 Days, 30, 90, or 365 days). You'll see:</p>
+    <ul style="margin:1rem 0 1rem 1.5rem;font-size:.875rem;color:var(--muted);line-height:2.2">
+      <li><strong>Total Revenue</strong> — total sales income in the period</li>
+      <li><strong>Total Orders</strong> — how many orders were placed</li>
+      <li><strong>Average Order Value</strong> — revenue ÷ orders</li>
+      <li><strong>Daily Revenue Chart</strong> — line graph showing revenue day by day</li>
+      <li><strong>Payment Method Breakdown</strong> — which payment methods customers used (Cash on Delivery, Razorpay, etc.)</li>
+    </ul>
+
+    <h3 class="sub">Products Report</h3>
+    <p style="font-size:.875rem;color:var(--muted)">Shows which parts are selling/being enquired about most. Useful for deciding what to keep in stock.</p>
+
+    <h3 class="sub">Customers Report</h3>
+    <p style="font-size:.875rem;color:var(--muted)">Shows your top customers by spend and order frequency.</p>
+
+
+    <!-- ═══════════════════════════════════ SEO ═══════════════════════════ -->
+    <h2 class="sec" id="seo"><span class="ic">🔍</span> SEO Management</h2>
+    <div class="path">Admin → <span>SEO</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">SEO (Search Engine Optimisation) helps your parts appear in Google searches — especially when customers search by part code or machine name.</p>
+
+    <h3 class="sub">Product SEO</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Select a Part</h4><p>Choose from the "Select Part" dropdown.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Fill In SEO Fields</h4>
+          <ul>
+            <li><strong>Meta Title</strong> — what Google shows as the link title. Best format: <code>[Part Code] [Part Name] for [Machine] | [Store Name]</code></li>
+            <li><strong>Search Keywords</strong> — include part code, machine models, and part type. Example: <code>SP-BEAR-001, deep groove bearing, Sulzer G6300, loom bearing</code></li>
+            <li><strong>Meta Description</strong> — the short summary Google shows under the title. Max 160 characters. Should mention the part code and what it's compatible with.</li>
+            <li><strong>OG Image URL</strong> — the image shown when shared on social media (usually the product image URL)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><h4>Save</h4><p>Click <strong>"Save Product SEO."</strong></p></div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <strong>💡 SEO Formula for Spare Parts:</strong><br>
+      Meta Title: <code>SP-BEAR-001 Deep Groove Ball Bearing for Sulzer G6300 | YourStore</code><br>
+      Meta Description: <code>Buy SP-BEAR-001 bearing compatible with Sulzer G6300, G6200. Enquire for pricing and fast dispatch.</code>
+    </div>
+
+    <h3 class="sub">Category SEO</h3>
+    <p style="font-size:.875rem;color:var(--muted)">Works the same as Product SEO but for category pages. Select the category tab, pick a category, fill in the fields.</p>
+
+    <h3 class="sub">Global Settings (Google Analytics &amp; Search Console)</h3>
+    <table>
+      <tr><th>Field</th><th>What To Do</th></tr>
+      <tr><td>Google Search Console Verification</td><td>Paste the content from the Google verification meta tag (from Google Search Console → Verify site → HTML tag method)</td></tr>
+      <tr><td>Google Analytics Measurement ID</td><td>Your GA4 ID (starts with G-). Find it in Google Analytics → Admin → Data Streams</td></tr>
+      <tr><td>Default Meta Title Template</td><td>Template used for parts that don't have custom SEO. Default: <code>{product_code} — {name} for {machine_name}</code></td></tr>
+    </table>
+
+
+    <!-- ═══════════════════════════════════ SETTINGS ═══════════════════════════ -->
+    <h2 class="sec" id="settings"><span class="ic">⚙️</span> Store Settings</h2>
+    <div class="path">Admin → <span>Settings</span></div>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">The Settings page has all the main configuration for your store. Changes take effect immediately after saving.</p>
+
+    <h3 class="sub">General Settings</h3>
+    <p style="font-size:.875rem;color:var(--muted)">These fields depend on what's set up in your database, but typically include: Store Name, Address, Phone, Email.</p>
+
+    <h3 class="sub" id="whatsapp-setup">Enquiry Notifications (WhatsApp &amp; Email)</h3>
+    <table>
+      <tr><th>Field</th><th>What To Enter</th></tr>
+      <tr><td>Admin Notification Email</td><td>Your email address — you'll receive a notification every time a new enquiry is submitted</td></tr>
+      <tr><td>Admin WhatsApp Number</td><td>Your WhatsApp number in international format without + or spaces. Example: <code>919876543210</code> for +91 98765 43210</td></tr>
+      <tr><td>Contact Phone (shown to customers)</td><td>Phone number displayed on the Contact page</td></tr>
+      <tr><td>Contact WhatsApp (for customers)</td><td>WhatsApp number customers can message (in same format as above)</td></tr>
+    </table>
+    <div class="tip"><strong>💡 Format Reminder:</strong> WhatsApp numbers must include the country code with no + sign or spaces. India example: <code>919876543210</code></div>
+
+    <h3 class="sub" id="smtp">Email Configuration (SMTP)</h3>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">SMTP settings are required for the system to send emails (enquiry notifications, quotations). Without this, emails may not be delivered.</p>
+    <table>
+      <tr><th>Field</th><th>Value</th></tr>
+      <tr><td>SMTP Host</td><td><code>smtp.gmail.com</code> for Gmail, <code>smtp.office365.com</code> for Outlook</td></tr>
+      <tr><td>SMTP Port</td><td><code>587</code> for TLS (recommended), <code>465</code> for SSL</td></tr>
+      <tr><td>Encryption</td><td>TLS (recommended for most providers)</td></tr>
+      <tr><td>SMTP Username</td><td>Your full email address (e.g. yourname@gmail.com)</td></tr>
+      <tr><td>SMTP Password</td><td><strong>For Gmail:</strong> Use an App Password — not your regular Gmail password. See steps below.</td></tr>
+      <tr><td>From Email</td><td>The email address that appears as sender (e.g. noreply@yourcompany.com)</td></tr>
+      <tr><td>From Name</td><td>The name that appears as sender (e.g. "Spare Parts Store")</td></tr>
+    </table>
+
+    <h3 class="sub">Setting Up Gmail App Password (Step by Step)</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Enable 2-Step Verification on your Google Account</h4><p>Go to <code>myaccount.google.com</code> → Security → 2-Step Verification → Turn it on.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Create an App Password</h4><p>Go to <code>myaccount.google.com/apppasswords</code> → Select app: "Mail" → Select device: "Other" → Name it "Spare Parts Store" → Click Generate.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><h4>Copy the 16-character Password</h4><p>Google shows a 4-word code like <code>xxxx xxxx xxxx xxxx</code>. Copy it.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <div><h4>Paste into SMTP Password Field</h4><p>In Settings → SMTP Password, click the eye icon to show the field, and paste the app password.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">5</div>
+        <div><h4>Save Settings</h4><p>Click <strong>"Save Settings"</strong> at the bottom.</p></div>
+      </div>
+    </div>
+
+    <h3 class="sub" id="ai-setup">AI Quotation Generator Setup (Groq)</h3>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">Groq is a free AI service that powers the quote generator. Follow these steps to get your free API key:</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><h4>Go to console.groq.com</h4><p>Open your browser and visit <code>https://console.groq.com</code>. Create a free account.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><h4>Create an API Key</h4><p>In the Groq dashboard, go to <strong>API Keys</strong> → Create New Key → give it a name like "Spare Parts Store."</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><h4>Copy the API Key</h4><p>It starts with <code>gsk_...</code>. Copy it immediately — Groq only shows it once!</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <div><h4>Paste in Settings</h4><p>In Admin → Settings → AI Quotation Generator (Groq) section → paste the key in the Groq API Key field → click eye icon to reveal → click Save Settings.</p></div>
+      </div>
+    </div>
+    <div class="success"><strong>✅ Free Tier:</strong> Groq's free plan is extremely generous — more than enough for generating quotation emails daily.</div>
+
+    <h3 class="sub">Saving Settings</h3>
+    <p style="font-size:.875rem;color:var(--muted)">After making any changes in Settings, scroll to the bottom and click <strong>"Save Settings."</strong> All settings are saved together in one click.</p>
+
+
+    <!-- ═══════════════════════════════════ QUICK REFERENCE ═══════════════════════ -->
+    <h2 class="sec" id="quick-ref"><span class="ic">📌</span> Quick Reference — Daily Tasks</h2>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem">Common daily admin tasks and where to do them:</p>
+    <table>
+      <tr><th>Task</th><th>Where To Go</th><th>How Often</th></tr>
+      <tr><td>Check for new enquiries</td><td>Dashboard → Recent Enquiries<br>or Admin → Enquiries</td><td>Multiple times per day</td></tr>
+      <tr><td>Send a quotation email</td><td>Admin → Enquiries → Click Enquiry → AI Generator or Template</td><td>As needed</td></tr>
+      <tr><td>Update enquiry status</td><td>Admin → Enquiries → Open Enquiry → Status Dropdown</td><td>After each action</td></tr>
+      <tr><td>Add a new part</td><td>Dashboard → Add New Part (or Admin → Products → + Add)</td><td>As needed</td></tr>
+      <tr><td>Restock a part</td><td>Admin → Inventory → Find Part → Adjust Stock</td><td>When stock arrives</td></tr>
+      <tr><td>Check low stock</td><td>Dashboard (bottom section) or Admin → Inventory → Low Stock</td><td>Daily</td></tr>
+      <tr><td>Update homepage banner</td><td>Admin → Banners</td><td>Monthly or seasonal</td></tr>
+      <tr><td>Review reports</td><td>Admin → Reports → Sales/Products</td><td>Weekly or monthly</td></tr>
+    </table>
+
+  </main>
+</div>
+
+<footer>
+  <strong>Spare Parts Portal</strong> — Admin Guide &nbsp;|&nbsp; For technical support, contact your web developer.
+</footer>
+
+<script>
+// Sidebar active state on scroll
+const links = document.querySelectorAll('.sidebar a');
+const sections = document.querySelectorAll('h2.sec');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+  links.forEach(l => {
+    l.classList.remove('active');
+    const href = l.getAttribute('href');
+    if (href === '#' + current) l.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

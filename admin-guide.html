@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electro Store — Admin Panel Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        /* ─── Reset & Base ─── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a1a; color: #c8cdd5; line-height: 1.7; }
+
+        /* ─── Scrollbar ─── */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a1a; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #435ebe, #7c5cfc); border-radius: 10px; }
+
+        /* ─── Navbar ─── */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,26,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(67,94,190,0.15); transition: all 0.3s; }
+        .navbar.scrolled { padding: 10px 40px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+        .navbar-brand { font-size: 1.3rem; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .navbar-brand i { font-size: 1.5rem; color: #435ebe; }
+        .nav-links { display: flex; gap: 8px; list-style: none; flex-wrap: wrap; }
+        .nav-links a { color: #8c91a0; text-decoration: none; font-size: 0.82rem; font-weight: 500; padding: 6px 14px; border-radius: 8px; transition: all 0.25s; }
+        .nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(67,94,190,0.2); }
+        .hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+
+        /* ─── Hero ─── */
+        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 80px; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 30% 50%, rgba(67,94,190,0.12) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(124,92,252,0.08) 0%, transparent 50%); animation: heroPulse 8s ease-in-out infinite alternate; }
+        @keyframes heroPulse { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1.05) rotate(2deg); } }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; }
+        .hero-badge { display: inline-block; padding: 6px 18px; background: rgba(67,94,190,0.15); border: 1px solid rgba(67,94,190,0.3); border-radius: 50px; font-size: 0.8rem; font-weight: 600; color: #7c9bff; margin-bottom: 24px; letter-spacing: 1.5px; text-transform: uppercase; }
+        .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; color: #fff; line-height: 1.15; margin-bottom: 20px; }
+        .hero h1 span { background: linear-gradient(135deg, #435ebe, #7c5cfc, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.15rem; color: #8c91a0; max-width: 600px; margin: 0 auto 36px; }
+        .hero-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; background: linear-gradient(135deg, #435ebe, #7c5cfc); color: #fff; text-decoration: none; font-weight: 600; border-radius: 12px; font-size: 1rem; transition: all 0.3s; box-shadow: 0 4px 20px rgba(67,94,190,0.4); }
+        .hero-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(67,94,190,0.5); }
+
+        /* ─── Section Layout ─── */
+        .section { padding: 100px 20px; max-width: 1100px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-number { font-size: 0.75rem; font-weight: 700; color: #435ebe; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
+        .section-header h2 { font-size: 2.2rem; font-weight: 800; color: #fff; margin-bottom: 14px; }
+        .section-header p { color: #8c91a0; font-size: 1.05rem; max-width: 600px; margin: 0 auto; }
+
+        /* ─── Step Cards ─── */
+        .steps { display: flex; flex-direction: column; gap: 28px; }
+        .step-card { display: flex; gap: 24px; padding: 32px; background: rgba(30,30,50,0.6); border: 1px solid rgba(67,94,190,0.1); border-radius: 16px; transition: all 0.35s; position: relative; overflow: hidden; }
+        .step-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(180deg, #435ebe, #7c5cfc); border-radius: 4px 0 0 4px; opacity: 0; transition: opacity 0.3s; }
+        .step-card:hover { background: rgba(30,30,50,0.85); border-color: rgba(67,94,190,0.25); transform: translateX(6px); }
+        .step-card:hover::before { opacity: 1; }
+        .step-num { flex-shrink: 0; width: 48px; height: 48px; background: linear-gradient(135deg, #435ebe, #7c5cfc); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: #fff; }
+        .step-body h3 { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .step-body p { color: #8c91a0; font-size: 0.92rem; }
+        .step-body .path { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 5px 14px; background: rgba(67,94,190,0.1); border-radius: 8px; font-size: 0.8rem; color: #7c9bff; font-family: 'Courier New', monospace; font-weight: 600; }
+
+        /* ─── Feature Grid ─── */
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .feature-card { padding: 32px; background: rgba(30,30,50,0.6); border: 1px solid rgba(67,94,190,0.1); border-radius: 16px; transition: all 0.35s; }
+        .feature-card:hover { background: rgba(30,30,50,0.85); border-color: rgba(67,94,190,0.3); transform: translateY(-4px); }
+        .feature-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 18px; }
+        .feature-icon.purple { background: rgba(124,92,252,0.15); color: #a78bfa; }
+        .feature-icon.blue { background: rgba(67,94,190,0.15); color: #7c9bff; }
+        .feature-icon.green { background: rgba(25,135,84,0.15); color: #4ade80; }
+        .feature-icon.orange { background: rgba(255,152,0,0.15); color: #fbbf24; }
+        .feature-icon.red { background: rgba(239,68,68,0.15); color: #f87171; }
+        .feature-icon.teal { background: rgba(20,184,166,0.15); color: #2dd4bf; }
+        .feature-card h3 { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .feature-card p { font-size: 0.88rem; color: #8c91a0; }
+        .feature-card ul { list-style: none; margin-top: 12px; }
+        .feature-card ul li { font-size: 0.85rem; color: #8c91a0; padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+        .feature-card ul li::before { content: '✓'; color: #4ade80; font-weight: 700; font-size: 0.75rem; }
+
+        /* ─── Sidebar Visual ─── */
+        .sidebar-visual { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; }
+        .sidebar-mock { width: 280px; flex-shrink: 0; background: #1e1e2d; border-radius: 16px; padding: 24px 0; border: 1px solid rgba(67,94,190,0.15); }
+        .sidebar-mock .brand { padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
+        .sidebar-mock .brand i { color: #435ebe; }
+        .sidebar-mock .menu-title { font-size: 0.7rem; font-weight: 700; color: #5a5f73; text-transform: uppercase; letter-spacing: 1.5px; padding: 18px 20px 8px; }
+        .sidebar-mock .menu-item { padding: 10px 20px; display: flex; align-items: center; gap: 12px; font-size: 0.88rem; color: #8c91a0; cursor: default; transition: all 0.2s; border-left: 3px solid transparent; }
+        .sidebar-mock .menu-item:hover { background: rgba(67,94,190,0.08); color: #c8cdd5; }
+        .sidebar-mock .menu-item.active { background: rgba(67,94,190,0.15); color: #fff; border-left-color: #435ebe; }
+        .sidebar-mock .menu-item i { font-size: 1rem; width: 20px; text-align: center; }
+        .sidebar-desc { flex: 1; min-width: 280px; }
+        .sidebar-desc h3 { color: #fff; font-size: 1.3rem; font-weight: 700; margin-bottom: 16px; }
+        .sidebar-desc .desc-item { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .sidebar-desc .desc-item:last-child { border-bottom: none; }
+        .sidebar-desc .desc-item strong { color: #c8cdd5; font-size: 0.9rem; }
+        .sidebar-desc .desc-item p { color: #6b7280; font-size: 0.83rem; margin-top: 4px; }
+
+        /* ─── Tips Section ─── */
+        .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .tip-card { padding: 28px; border-radius: 14px; border: 1px solid; }
+        .tip-card.info { background: rgba(67,94,190,0.06); border-color: rgba(67,94,190,0.15); }
+        .tip-card.warn { background: rgba(251,191,36,0.04); border-color: rgba(251,191,36,0.12); }
+        .tip-card.success { background: rgba(74,222,128,0.04); border-color: rgba(74,222,128,0.12); }
+        .tip-card h4 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .tip-card p { font-size: 0.85rem; color: #8c91a0; }
+
+        /* ─── Table of Contents ─── */
+        .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 40px; }
+        .toc a { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: rgba(30,30,50,0.6); border: 1px solid rgba(67,94,190,0.1); border-radius: 12px; text-decoration: none; transition: all 0.25s; }
+        .toc a:hover { background: rgba(67,94,190,0.1); border-color: rgba(67,94,190,0.3); transform: translateY(-2px); }
+        .toc a .toc-num { width: 32px; height: 32px; border-radius: 8px; background: rgba(67,94,190,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: #7c9bff; flex-shrink: 0; }
+        .toc a span { color: #c8cdd5; font-size: 0.88rem; font-weight: 500; }
+
+        /* ─── Footer ─── */
+        .guide-footer { text-align: center; padding: 60px 20px; border-top: 1px solid rgba(67,94,190,0.1); }
+        .guide-footer p { color: #5a5f73; font-size: 0.85rem; }
+
+        /* ─── Scroll Animation ─── */
+        .fade-up { opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 20px; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(10,10,26,0.98); flex-direction: column; padding: 16px; gap: 4px; border-bottom: 1px solid rgba(67,94,190,0.15); }
+            .nav-links.open { display: flex; }
+            .hamburger { display: block; }
+            .step-card { flex-direction: column; gap: 16px; }
+            .sidebar-visual { flex-direction: column; }
+            .sidebar-mock { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════ NAVBAR ═══════════════ -->
+<nav class="navbar" id="navbar">
+    <a href="#" class="navbar-brand"><i class="bi bi-shop-window"></i> Admin Guide</a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')"><i class="bi bi-list"></i></button>
+    <ul class="nav-links">
+        <li><a href="#login">Login</a></li>
+        <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="#sidebar">Navigation</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#orders">Orders</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#tips">Tips</a></li>
+    </ul>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero" id="top">
+    <div class="hero-content fade-up">
+        <div class="hero-badge">📖 Official Documentation</div>
+        <h1>Electro Store<br><span>Admin Panel Guide</span></h1>
+        <p>A complete step-by-step walkthrough to help you manage your store — from logging in, to managing products, orders, customers, and everything in between.</p>
+        <a href="#login" class="hero-btn"><i class="bi bi-arrow-down-circle"></i> Get Started</a>
+        <div class="toc">
+            <a href="#login"><div class="toc-num">01</div><span>Logging into Admin</span></a>
+            <a href="#dashboard"><div class="toc-num">02</div><span>Dashboard Overview</span></a>
+            <a href="#sidebar"><div class="toc-num">03</div><span>Sidebar Navigation</span></a>
+            <a href="#products"><div class="toc-num">04</div><span>Product Management</span></a>
+            <a href="#orders"><div class="toc-num">05</div><span>Order Management</span></a>
+            <a href="#features"><div class="toc-num">06</div><span>All Admin Features</span></a>
+            <a href="#scrolling"><div class="toc-num">07</div><span>Scrolling & Tables</span></a>
+            <a href="#tips"><div class="toc-num">08</div><span>Pro Tips & Shortcuts</span></a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ STEP 1: LOGIN ═══════════════ -->
+<section class="section" id="login">
+    <div class="section-header fade-up">
+        <div class="section-number">Step 01</div>
+        <h2>Logging into the Admin Panel</h2>
+        <p>Access your store's backend to manage everything from a single, powerful dashboard.</p>
+    </div>
+    <div class="steps">
+        <div class="step-card fade-up">
+            <div class="step-num">1</div>
+            <div class="step-body">
+                <h3>Open the Admin Login Page</h3>
+                <p>Open your web browser and navigate to the admin login URL. This is a separate area from the customer-facing storefront.</p>
+                <div class="path"><i class="bi bi-globe2"></i> http://yoursite.com/E-com/admin/login</div>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num">2</div>
+            <div class="step-body">
+                <h3>Enter Your Credentials</h3>
+                <p>Type your <strong>admin email address</strong> and <strong>password</strong> in the login form. These credentials are provided by the system administrator or were set during initial setup.</p>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num">3</div>
+            <div class="step-body">
+                <h3>Click "Login" to Access the Dashboard</h3>
+                <p>After entering valid credentials, click the <strong>Login</strong> button. You'll be redirected to the admin dashboard where you can see an overview of your store's performance.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ STEP 2: DASHBOARD ═══════════════ -->
+<section class="section" id="dashboard">
+    <div class="section-header fade-up">
+        <div class="section-number">Step 02</div>
+        <h2>Understanding the Dashboard</h2>
+        <p>Your command center — see all key metrics at a glance including orders, revenue, and alerts.</p>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card fade-up">
+            <div class="feature-icon purple"><i class="bi bi-cart-check-fill"></i></div>
+            <h3>Stats Cards (Top Row)</h3>
+            <p>Four key metric cards displayed at the top showing:</p>
+            <ul>
+                <li>Total Orders received</li>
+                <li>Total Customers registered</li>
+                <li>Total Revenue earned</li>
+                <li>Total Products in catalog</li>
+            </ul>
+        </div>
+        <div class="feature-card fade-up">
+            <div class="feature-icon blue"><i class="bi bi-bar-chart-fill"></i></div>
+            <h3>Monthly Sales Chart</h3>
+            <p>An interactive bar + line chart showing monthly revenue and order count. Hover over any bar to see the exact figures. This helps track sales trends over time.</p>
+        </div>
+        <div class="feature-card fade-up">
+            <div class="feature-icon green"><i class="bi bi-lightning-fill"></i></div>
+            <h3>Quick Stats Panel</h3>
+            <p>A sidebar panel showing urgent items:</p>
+            <ul>
+                <li>Pending Orders awaiting processing</li>
+                <li>Orders currently being processed</li>
+                <li>Low Stock items that need restocking</li>
+                <li>Pending Reviews to approve</li>
+            </ul>
+        </div>
+        <div class="feature-card fade-up">
+            <div class="feature-icon orange"><i class="bi bi-trophy-fill"></i></div>
+            <h3>Best Sellers & Recent Orders</h3>
+            <p>See your top-selling products with images, prices, and sold count. Below that, a full table of recent orders with order number, customer, total, payment status, order status, and date. Click any row to see details.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ STEP 3: SIDEBAR NAV ═══════════════ -->
+<section class="section" id="sidebar">
+    <div class="section-header fade-up">
+        <div class="section-number">Step 03</div>
+        <h2>Sidebar Navigation</h2>
+        <p>The left sidebar is your primary navigation hub. Here's every menu item and what it does.</p>
+    </div>
+    <div class="sidebar-visual fade-up">
+        <div class="sidebar-mock">
+            <div class="brand"><i class="bi bi-shop"></i> Electro Store</div>
+            <div class="menu-title">Main Menu</div>
+            <div class="menu-item active"><i class="bi bi-grid-fill"></i> Dashboard</div>
+            <div class="menu-title">Catalog</div>
+            <div class="menu-item"><i class="bi bi-box-seam"></i> Products</div>
+            <div class="menu-item"><i class="bi bi-tags"></i> Categories</div>
+            <div class="menu-item"><i class="bi bi-boxes"></i> Inventory</div>
+            <div class="menu-title">Sales</div>
+            <div class="menu-item"><i class="bi bi-cart-check"></i> Orders</div>
+            <div class="menu-item"><i class="bi bi-people"></i> Customers</div>
+            <div class="menu-item"><i class="bi bi-ticket-perforated"></i> Coupons</div>
+            <div class="menu-item"><i class="bi bi-credit-card"></i> Payments</div>
+            <div class="menu-title">Analytics</div>
+            <div class="menu-item"><i class="bi bi-bar-chart"></i> Reports ▸</div>
+            <div class="menu-title">System</div>
+            <div class="menu-item"><i class="bi bi-search"></i> SEO</div>
+            <div class="menu-item"><i class="bi bi-gear"></i> Settings</div>
+            <div class="menu-item"><i class="bi bi-globe"></i> View Store</div>
+            <div class="menu-item"><i class="bi bi-box-arrow-left"></i> Logout</div>
+        </div>
+        <div class="sidebar-desc">
+            <h3>Menu Sections Explained</h3>
+            <div class="desc-item"><strong>📊 Dashboard</strong><p>Your overview page with stats, charts, recent orders, and alerts.</p></div>
+            <div class="desc-item"><strong>📦 Products</strong><p>Add, edit, delete products. Set prices, images, sale prices, stock, and featured status.</p></div>
+            <div class="desc-item"><strong>🏷️ Categories</strong><p>Create parent/child categories with images. Organize your catalog hierarchy.</p></div>
+            <div class="desc-item"><strong>📋 Inventory</strong><p>Quick-adjust stock levels with +/- buttons. View low-stock alerts instantly.</p></div>
+            <div class="desc-item"><strong>🛒 Orders</strong><p>View, filter, and manage all orders. Update order status and see payment info.</p></div>
+            <div class="desc-item"><strong>👥 Customers</strong><p>Browse all customers, search by name/email, see join dates and status.</p></div>
+            <div class="desc-item"><strong>🎟️ Coupons</strong><p>Create % or fixed-amount discount codes with expiry and usage limits.</p></div>
+            <div class="desc-item"><strong>💳 Payments</strong><p>Track all payments, filter by method (Razorpay, Stripe, PayPal, COD).</p></div>
+            <div class="desc-item"><strong>📈 Reports</strong><p>Sales, Product, and Customer analytics with charts and time-period filters.</p></div>
+            <div class="desc-item"><strong>🔍 SEO</strong><p>Set meta titles, descriptions, keywords, and OG images per product/category.</p></div>
+            <div class="desc-item"><strong>⚙️ Settings</strong><p>Configure store name, currency, contact info, and other global settings.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ STEP 4: PRODUCTS ═══════════════ -->
+<section class="section" id="products">
+    <div class="section-header fade-up">
+        <div class="section-number">Step 04</div>
+        <h2>Managing Products</h2>
+        <p>Add new products, edit pricing, manage images, and organize your entire catalog.</p>
+    </div>
+    <div class="steps">
+        <div class="step-card fade-up">
+            <div class="step-num">1</div>
+            <div class="step-body">
+                <h3>Go to Products Page</h3>
+                <p>Click <strong>"Products"</strong> in the sidebar under the Catalog section. You'll see a filterable table of all products with image, name, SKU, category, price, stock level, status, and featured badge.</p>
+                <div class="path"><i class="bi bi-link-45deg"></i> Sidebar → Catalog → Products</div>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num">2</div>
+            <div class="step-body">
+                <h3>Use Filters to Find Products</h3>
+                <p>At the top, you can <strong>search by name or SKU</strong>, filter by <strong>category</strong>, filter by <strong>status</strong> (Active/Inactive), and <strong>sort</strong> by newest, price, or name. Click "Filter" to apply, or "Reset" to clear.</p>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num">3</div>
+            <div class="step-body">
+                <h3>Add a New Product</h3>
+                <p>Click the blue <strong>"+ Add Product"</strong> button in the top-right corner. Fill in the product form: name, description, price, sale price, SKU, stock quantity, category, images, and featured status. Click <strong>Save</strong>.</p>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num">4</div>
+            <div class="step-body">
+                <h3>Edit or Delete Products</h3>
+                <p>Each product row has action buttons: click the <strong>✏️ pencil icon</strong> to edit, or the <strong>🗑️ trash icon</strong> to delete (with confirmation prompt). When editing, you can change any product field and re-upload images.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ STEP 5: ORDERS ═══════════════ -->
+<section class="section" id="orders">
+    <div class="section-header fade-up">
+        <div class="section-number">Step 05</div>
+        <h2>Managing Orders</h2>
+        <p>Track, filter, and process all customer orders from placement to delivery.</p>
+    </div>
+    <div class="steps">
+        <div class="step-card fade-up">
+            <div class="step-num">1</div>
+            <div class="step-body">
+                <h3>Navigate to the Orders Page</h3>
+                <p>Click <strong>"Orders"</strong> in the sidebar under Sales. You'll see a table with: Order #, Customer name & email, Item count, Total amount, Payment status, Payment method, Order status, and Date.</p>
+                <div class="path"><i class="bi bi-link-45deg"></i> Sidebar → Sales → Orders</div>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num">2</div>
+            <div class="step-body">
+                <h3>Filter Orders</h3>
+                <p>Use the filter bar to search by <strong>order number or customer name</strong>, filter by <strong>status</strong> (Pending, Confirmed, Packed, Shipped, Delivered, Cancelled), filter by <strong>payment status</strong> (Pending, Paid, Failed, Refunded), and set a <strong>date range</strong>.</p>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num">3</div>
+            <div class="step-body">
+                <h3>View Order Details</h3>
+                <p>Click the <strong>👁️ eye icon</strong> on any order to open its detail page. Here you can see the full order breakdown — items ordered, shipping address, payment details, and timeline. You can <strong>update the order status</strong> (e.g., move from "Pending" → "Confirmed" → "Shipped" → "Delivered").</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ STEP 6: ALL FEATURES ═══════════════ -->
+<section class="section" id="features">
+    <div class="section-header fade-up">
+        <div class="section-number">Step 06</div>
+        <h2>All Admin Features</h2>
+        <p>Deep-dive into every module available in your admin panel.</p>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card fade-up">
+            <div class="feature-icon green"><i class="bi bi-boxes"></i></div>
+            <h3>Inventory Management</h3>
+            <p>Quickly adjust stock levels for any product without opening the full edit form.</p>
+            <ul>
+                <li>Search products by name or SKU</li>
+                <li>See color-coded stock badges (green/yellow/red)</li>
+                <li>Use +, −, or = to add, subtract, or set stock</li>
+                <li>Dedicated "Low Stock Alerts" page</li>
+            </ul>
+        </div>
+        <div class="feature-card fade-up">
+            <div class="feature-icon orange"><i class="bi bi-ticket-perforated-fill"></i></div>
+            <h3>Coupon Management</h3>
+            <p>Create discount campaigns to boost sales and customer engagement.</p>
+            <ul>
+                <li>Percentage (%) or Fixed Amount coupons</li>
+                <li>Set minimum order amount requirement</li>
+                <li>Usage limits (total uses cap)</li>
+                <li>Expiry date with auto-expiration</li>
+                <li>Performance tracking dashboard</li>
+            </ul>
+        </div>
+        <div class="feature-card fade-up">
+            <div class="feature-icon teal"><i class="bi bi-credit-card-2-front-fill"></i></div>
+            <h3>Payments Tracking</h3>
+            <p>Monitor all payment transactions across multiple gateways.</p>
+            <ul>
+                <li>View by method: Razorpay, Stripe, PayPal, COD</li>
+                <li>Distribution cards showing totals per method</li>
+                <li>Filter by status, method, and date range</li>
+                <li>Full Transaction Log with IDs</li>
+            </ul>
+        </div>
+        <div class="feature-card fade-up">
+            <div class="feature-icon blue"><i class="bi bi-graph-up-arrow"></i></div>
+            <h3>Reports & Analytics</h3>
+            <p>Data-driven insights to grow your business.</p>
+            <ul>
+                <li><strong>Sales Report:</strong> Revenue, orders, avg. value with charts</li>
+                <li><strong>Product Report:</strong> Best sellers, performance data</li>
+                <li><strong>Customer Report:</strong> Registration trends, activity</li>
+                <li>Time period filters: 7, 30, 90, 365 days</li>
+            </ul>
+        </div>
+        <div class="feature-card fade-up">
+            <div class="feature-icon red"><i class="bi bi-search-heart"></i></div>
+            <h3>SEO Management</h3>
+            <p>Optimize your store for search engines directly from the admin.</p>
+            <ul>
+                <li>Set meta title & description per product</li>
+                <li>Set meta title & description per category</li>
+                <li>Add meta keywords for search ranking</li>
+                <li>Configure Open Graph (OG) images</li>
+            </ul>
+        </div>
+        <div class="feature-card fade-up">
+            <div class="feature-icon purple"><i class="bi bi-gear-wide-connected"></i></div>
+            <h3>Site Settings</h3>
+            <p>Configure global store settings grouped by category.</p>
+            <ul>
+                <li>Store name, currency, contact info</li>
+                <li>Settings auto-grouped (General, Shipping, etc.)</li>
+                <li>Long values show as text areas</li>
+                <li>One-click "Save Settings" for all changes</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ STEP 7: SCROLLING FEATURES ═══════════════ -->
+<section class="section" id="scrolling">
+    <div class="section-header fade-up">
+        <div class="section-number">Step 07</div>
+        <h2>Scrolling, Tables & Navigation Tips</h2>
+        <p>How to use scrollable tables, horizontal overflow, and quick navigation in the admin panel.</p>
+    </div>
+    <div class="steps">
+        <div class="step-card fade-up">
+            <div class="step-num"><i class="bi bi-arrows-expand"></i></div>
+            <div class="step-body">
+                <h3>Horizontally Scrollable Tables</h3>
+                <p>All admin tables (Products, Orders, Payments, Customers, etc.) are wrapped in a <strong>responsive scrollable container</strong>. On smaller screens or when columns are wide, you can <strong>scroll left/right</strong> by dragging or swiping horizontally. The table headers remain visible as you scroll down.</p>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num"><i class="bi bi-arrow-left-right"></i></div>
+            <div class="step-body">
+                <h3>Pagination Controls</h3>
+                <p>Large data sets are split across multiple pages. When there are more items than one page can show, <strong>pagination buttons</strong> appear at the bottom of the table. Click page numbers or Next/Previous arrows to navigate between pages. The current page is highlighted.</p>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num"><i class="bi bi-phone"></i></div>
+            <div class="step-body">
+                <h3>Mobile Sidebar Toggle</h3>
+                <p>On mobile or tablet devices, the sidebar collapses automatically. Tap the <strong>☰ hamburger icon</strong> (three horizontal lines) at the top-left to open/close the sidebar navigation. The sidebar slides in as an overlay and can be dismissed by tapping the <strong>✕ close button</strong>.</p>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num"><i class="bi bi-mouse2"></i></div>
+            <div class="step-body">
+                <h3>Clickable Table Rows</h3>
+                <p>In the Dashboard's "Recent Orders" table, you can <strong>click any entire row</strong> to navigate directly to that order's detail page. The cursor changes to a pointer to indicate clickable rows. This works as a quick shortcut instead of finding the "View" button.</p>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num"><i class="bi bi-window-stack"></i></div>
+            <div class="step-body">
+                <h3>Modal Pop-ups (Categories & Coupons)</h3>
+                <p>Categories and Coupons use <strong>modal pop-ups</strong> for creating and editing entries. Click "Add Category" or "Add Coupon" and a form slides up over the page. Fill it out and submit without leaving the page. The page content underneath is dimmed and unscrollable until you close the modal.</p>
+            </div>
+        </div>
+        <div class="step-card fade-up">
+            <div class="step-num"><i class="bi bi-layout-sidebar-inset"></i></div>
+            <div class="step-body">
+                <h3>Sidebar Scroll & Active States</h3>
+                <p>The sidebar itself is scrollable if there are many items. The <strong>currently active page</strong> is highlighted in blue in the sidebar so you always know where you are. Submenus (like Reports) expand/collapse with an arrow indicator.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ STEP 8: TIPS ═══════════════ -->
+<section class="section" id="tips">
+    <div class="section-header fade-up">
+        <div class="section-number">Step 08</div>
+        <h2>Pro Tips & Best Practices</h2>
+        <p>Expert advice to get the most out of your admin panel.</p>
+    </div>
+    <div class="tips-grid">
+        <div class="tip-card info fade-up">
+            <h4><i class="bi bi-lightbulb-fill" style="color:#7c9bff;"></i> Check the Dashboard Daily</h4>
+            <p>Start each day on the Dashboard. Review pending orders, low-stock alerts, and new customer registrations so nothing falls through the cracks.</p>
+        </div>
+        <div class="tip-card warn fade-up">
+            <h4><i class="bi bi-exclamation-triangle-fill" style="color:#fbbf24;"></i> Always Confirm Deletions</h4>
+            <p>All delete actions show a confirmation prompt. Read it carefully — deleted products, categories, and coupons cannot be recovered once confirmed.</p>
+        </div>
+        <div class="tip-card success fade-up">
+            <h4><i class="bi bi-star-fill" style="color:#4ade80;"></i> Use Featured Products</h4>
+            <p>Mark your best products as "Featured" using the star toggle. Featured products appear prominently on the homepage and attract more clicks.</p>
+        </div>
+        <div class="tip-card info fade-up">
+            <h4><i class="bi bi-diagram-3-fill" style="color:#7c9bff;"></i> Organize Categories</h4>
+            <p>Create parent categories first (e.g., "Electronics"), then add sub-categories (e.g., "Laptops", "Phones"). A clean hierarchy helps customers browse.</p>
+        </div>
+        <div class="tip-card warn fade-up">
+            <h4><i class="bi bi-box-seam-fill" style="color:#fbbf24;"></i> Monitor Low Stock</h4>
+            <p>Visit <strong>Inventory → Low Stock Alerts</strong> regularly. Set appropriate thresholds so you're alerted before popular items sell out completely.</p>
+        </div>
+        <div class="tip-card success fade-up">
+            <h4><i class="bi bi-search" style="color:#4ade80;"></i> Optimize SEO Early</h4>
+            <p>Set meta titles and descriptions for products and categories right from the start. Good SEO brings organic traffic and reduces your marketing spend.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="guide-footer">
+    <p>Electro Store Admin Guide &middot; Built for store administrators &middot; © 2026</p>
+</footer>
+
+<!-- ═══════════════ SCROLL ANIMATIONS ═══════════════ -->
+<script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Fade-up on scroll (Intersection Observer)
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Active nav link highlight on scroll
+    const sections = document.querySelectorAll('.section, .hero');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const top = section.offsetTop - 120;
+            if (window.scrollY >= top) current = section.getAttribute('id');
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>

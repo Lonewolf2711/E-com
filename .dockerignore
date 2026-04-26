@@ -1,0 +1,10 @@
+.git
+.gitignore
+.dockerignore
+*.zip
+config.zip
+public.zip
+ignore/
+node_modules/
+vendor/
+.env

@@ -1,0 +1,20 @@
+# Prevent PHP execution in uploads directory
+<Files *.php>
+    Deny from all
+</Files>
+<Files *.phtml>
+    Deny from all
+</Files>
+<Files *.php3>
+    Deny from all
+</Files>
+<Files *.php4>
+    Deny from all
+</Files>
+<Files *.php5>
+    Deny from all
+</Files>
+
+# Disable script execution
+Options -ExecCGI
+RemoveHandler .php .phtml .php3 .php4 .php5
