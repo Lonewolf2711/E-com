@@ -3,12 +3,20 @@ FROM php:8.2-apache
 # Install required extensions
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# Force a single MPM (prefork) by removing ALL MPM symlinks then enabling prefork.
-# Also enable mod_rewrite. The ls at the end is a build-log sanity check.
-RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf \
+# Force a single MPM (prefork). Diagnostic dumps included so the build
+# log shows where any extra MPM LoadModule lines are coming from.
+RUN echo "=== mods-enabled BEFORE ===" \
+    && ls /etc/apache2/mods-enabled/ | grep -i mpm || true \
+    && echo "=== conf-enabled ===" \
+    && ls /etc/apache2/conf-enabled/ || true \
+    && echo "=== all LoadModule mpm references in /etc/apache2 ===" \
+    && grep -rin "LoadModule.*mpm" /etc/apache2/ || true \
+    && rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf \
     && a2enmod mpm_prefork rewrite \
-    && echo "--- mods-enabled after fix ---" \
-    && ls /etc/apache2/mods-enabled/ | grep mpm_
+    && echo "=== mods-enabled AFTER ===" \
+    && ls /etc/apache2/mods-enabled/ | grep -i mpm \
+    && echo "=== LoadModule mpm references AFTER ===" \
+    && grep -rin "LoadModule.*mpm" /etc/apache2/ || true
 
 # Copy application files to the container
 COPY . /var/www/html/
